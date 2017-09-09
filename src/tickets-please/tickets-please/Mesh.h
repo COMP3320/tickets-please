@@ -1,12 +1,16 @@
+
+
 #ifndef MESH_H
 #define MESH_H
+
+#include <GL/glew.h> // holds all OpenGL type declarations
 
 #include <assimp/Importer.hpp>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#include "Shader.h"
+#include "shader.h"
 
 #include <string>
 #include <fstream>
@@ -79,7 +83,7 @@ public:
 				ss << heightNr++; // transfer unsigned int to stream
 			number = ss.str();
 			// now set the sampler to the correct texture unit
-			glUniform1i(glGetUniformLocation(shader.getID(), (name + number).c_str()), i);
+			glUniform1i(glGetUniformLocation(shader.ID, (name + number).c_str()), i);
 			// and finally bind the texture
 			glBindTexture(GL_TEXTURE_2D, textures[i].id);
 		}
@@ -133,8 +137,12 @@ private:
 		// vertex bitangent
 		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
+		// colour
+		glEnableVertexAttribArray(5);
+		glVertexAttribPointer(5, 5, GL_FLOAT, GL_TRUE, 11 * sizeof(float), (void*)(6 * sizeof(float)));
 
 		glBindVertexArray(0);
 	}
 };
 #endif
+
