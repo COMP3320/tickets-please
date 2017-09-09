@@ -1,15 +1,22 @@
-#include <GL/glew.h>  
+#define GLM_FORCE_RADIANS
+#include <SOIL.h>
+
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-#include "Shader.h"
-#include "Camera.h"
-#include "Model.h"
+#include "shader.h"
+#include "camera.h"
+#include "model.h"
+
+#include <stdio.h>  
+#include <stdlib.h> 
 
 #include <iostream>
+#include <fstream> 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -72,10 +79,8 @@ int main()
 	// -------------------------
 	Shader ourShader("shader.vert", "shader.frag");
 
-	// load models
-	// -----------
 	Model ourModel("../nanosuit/nanosuit.obj");
-
+	Model ourModel2("../nanosuit/nanosuit.obj");
 
 	// draw in wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -96,30 +101,42 @@ int main()
 
 		// render
 		// ------
-		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// don't forget to enable shader before setting uniforms
-		ourShader.bind();
+		ourShader.use();
 
 		// view/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
+		ourShader.setMat4("projection", projection);
+		ourShader.setMat4("view", view);
 
-		GLint uniProj = ourShader.getUniformLocation("proj");
-		glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(projection));
+	/*	glm::vec4 light_position = glm::vec4(0, 0.5, 0, 1);
+		ourShader.setVec4("light_position", light_position);
 
-		GLint uniView = ourShader.getUniformLocation("view");
-		glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
-
+		glm::vec4 light_colour(1, 1, 1, 1);
+		ourShader.setVec4("light_colour", light_colour);
+		*/
 		// render the loaded model
 		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-		
-		GLint uniModel = ourShader.getUniformLocation("model");
-		glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));	// it's a bit too big for our scene, so scale it down
+		ourShader.setMat4("model", model);
 		ourModel.Draw(ourShader);
+
+		glm::mat4 model2;
+		model2 = glm::rotate(model2, 3.f, glm::vec3(0.0f, 1.0f, 0.0f));
+		model2 = glm::translate(model2, glm::vec3(0.0f, 0.0f, 0.5f)); // translate it down so it's at the center of the scene
+		model2 = glm::scale(model2, glm::vec3(0.05f, 0.05f, 0.05f));	// it's a bit too big for our scene, so scale it down
+
+		ourShader.setMat4("model", model2);
+		ourModel2.Draw(ourShader);
+		
+
+
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
