@@ -1,9 +1,0 @@
-﻿  Shader.cpp
-u:\comp3320\src\tickets-please\tickets-please\shader.h(11): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
-  Model.cpp
-u:\comp3320\src\tickets-please\tickets-please\model.h(9): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
-  Mesh.cpp
-u:\comp3320\src\tickets-please\tickets-please\mesh.h(14): fatal error C1083: Cannot open include file: 'assimp/types.h': No such file or directory
-  main.cpp
-u:\comp3320\src\tickets-please\tickets-please\main.cpp(6): fatal error C1083: Cannot open include file: 'SOIL.h': No such file or directory
-  Generating Code...

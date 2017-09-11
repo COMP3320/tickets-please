@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\nanosuit">
+      <UniqueIdentifier>{9dace98d-fe1d-4799-8132-9fd647b8c227}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\objects">
+      <UniqueIdentifier>{b6c8d95a-780e-41ca-8c9d-b8e9d2aed8ca}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="arm_dif.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="arm_showroom_ddn.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="arm_showroom_spec.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="body_dif.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="body_showroom_ddn.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="body_showroom_spec.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="glass_ddn.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="glass_dif.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="hand_dif.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="hand_showroom_ddn.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="helmet_diff.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="hand_showroom_spec.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="helmet_showroom_ddn.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="helmet_showroom_spec.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="leg_dif.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="leg_showroom_ddn.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="leg_showroom_spec.png">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Image>
+    <Image Include="kitten.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shader.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="nanosuit.blend">
+      <Filter>Resource Files\nanosuit</Filter>
+    </None>
+    <None Include="nanosuit.mtl">
+      <Filter>Resource Files\nanosuit</Filter>
+    </None>
+    <None Include="..\objects\basicmap.mtl">
+      <Filter>Resource Files\objects</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="shader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="nanosuit.obj">
+      <Filter>Resource Files\nanosuit</Filter>
+    </Object>
+    <Object Include="..\objects\basicmap.obj">
+      <Filter>Resource Files\objects</Filter>
+    </Object>
+  </ItemGroup>
+</Project>
