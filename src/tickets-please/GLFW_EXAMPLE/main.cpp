@@ -94,9 +94,9 @@ int main()
 		std::istreambuf_iterator<char>());
 	const char* objSource = contents.c_str();
 
-	Model ourModel("../nanosuit/nanosuit.obj");
-	Model ourModel2("../nanosuit/nanosuit.obj");
-	Model ourModel3("../objects/basicmap.obj");
+//	Model ourModel("../nanosuit/nanosuit.obj");
+//	Model ourModel2("../nanosuit/nanosuit.obj");
+	Model ourModel3("../objects/map.obj");
 	// draw in wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -135,12 +135,12 @@ int main()
 		ourShader.setVec4("light_colour", light_colour);
 		*/
 		// render the loaded model
-/*		glm::mat4 model;
+		glm::mat4 model;
 
 		model = glm::translate(model, glm::vec3(0.0f, -0.65f, 0.0f)); // translate it down so it's at the center of the scene
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));	// it's a bit too big for our scene, so scale it down
 		ourShader.setMat4("model", model);
-		ourModel.Draw(ourShader);
+	//	ourModel.Draw(ourShader);
 
 		glm::mat4 model2;
 		model2 = glm::rotate(model2, 3.f, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -148,12 +148,12 @@ int main()
 		model2 = glm::scale(model2, glm::vec3(0.05f, 0.05f, 0.05f));	// it's a bit too big for our scene, so scale it down
 
 		ourShader.setMat4("model", model2);
-		ourModel2.Draw(ourShader);
-*/		
+	//	ourModel2.Draw(ourShader);
+		
 		glm::mat4 model3;
 		model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
 		model3 = glm::translate(model3, glm::vec3(-0.01f, -0.1f, 0.0f)); // translate it down so it's at the center of the scene
-		model3 = glm::scale(model3, glm::vec3(5.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+//		model3 = glm::scale(model3, glm::vec3(5.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
 
 		ourShader.setMat4("model", model3);
 		ourModel3.Draw(ourShader);

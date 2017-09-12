@@ -80,6 +80,18 @@
     <Image Include="kitten.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\objects\PoleUV.png">
+      <Filter>Resource Files\objects</Filter>
+    </Image>
+    <Image Include="..\objects\PoleUV_out.png">
+      <Filter>Resource Files\objects</Filter>
+    </Image>
+    <Image Include="..\objects\testUV.png">
+      <Filter>Resource Files\objects</Filter>
+    </Image>
+    <Image Include="..\objects\testUV_out.png">
+      <Filter>Resource Files\objects</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -95,6 +107,9 @@
       <Filter>Resource Files\nanosuit</Filter>
     </None>
     <None Include="..\objects\basicmap.mtl">
+      <Filter>Resource Files\objects</Filter>
+    </None>
+    <None Include="..\objects\Map.mtl">
       <Filter>Resource Files\objects</Filter>
     </None>
   </ItemGroup>
@@ -117,6 +132,9 @@
       <Filter>Resource Files\nanosuit</Filter>
     </Object>
     <Object Include="..\objects\basicmap.obj">
+      <Filter>Resource Files\objects</Filter>
+    </Object>
+    <Object Include="..\objects\Map.obj">
       <Filter>Resource Files\objects</Filter>
     </Object>
   </ItemGroup>

@@ -85,6 +85,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\objects\PoleUV.png" />
+    <Image Include="..\objects\PoleUV_out.png" />
+    <Image Include="..\objects\testUV.png" />
+    <Image Include="..\objects\testUV_out.png" />
     <Image Include="arm_dif.png" />
     <Image Include="arm_showroom_ddn.png" />
     <Image Include="arm_showroom_spec.png" />
@@ -106,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\objects\basicmap.mtl" />
+    <None Include="..\objects\Map.mtl" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
     <None Include="shader.frag" />
@@ -119,6 +124,9 @@
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\objects\basicmap.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\objects\Map.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="nanosuit.obj">
