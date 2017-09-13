@@ -111,6 +111,7 @@
   <ItemGroup>
     <None Include="..\objects\basicmap.mtl" />
     <None Include="..\objects\Map.mtl" />
+    <None Include="..\objects\map2.mtl" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
     <None Include="shader.frag" />
@@ -127,6 +128,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\objects\Map.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\objects\map2.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="nanosuit.obj">

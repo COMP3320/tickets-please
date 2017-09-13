@@ -171,6 +171,7 @@ private:
 		vector<Texture> textures;
 		for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 		{
+			cout << "Already loaded" << endl;
 			aiString str;
 			mat->GetTexture(type, i, &str);
 			// check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
@@ -186,6 +187,7 @@ private:
 			}
 			if (!skip)
 			{   // if texture hasn't been loaded already, load it
+				cout << "Loadin" << endl;
 				Texture texture;
 				texture.id = TextureFromFile(str.C_Str(), this->directory);
 				texture.type = typeName;

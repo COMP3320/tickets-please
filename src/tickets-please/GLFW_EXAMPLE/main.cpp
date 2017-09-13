@@ -67,7 +67,7 @@ int main()
 
 	// tell GLFW to capture our mouse
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
+	glewExperimental = GL_TRUE;
 	// glad: load all OpenGL function pointers
 	// ---------------------------------------
 	GLenum err = glewInit();
@@ -94,9 +94,12 @@ int main()
 		std::istreambuf_iterator<char>());
 	const char* objSource = contents.c_str();
 
-//	Model ourModel("../nanosuit/nanosuit.obj");
+	Model ourModel("../nanosuit/nanosuit.obj");
 //	Model ourModel2("../nanosuit/nanosuit.obj");
-	Model ourModel3("../objects/map.obj");
+	Model ourModel3("../objects/map2.obj");
+	Model ourModel4("../objects/map2.obj");
+	Model ourModel5("../objects/mapend.obj");
+	Model ourModel6("../objects/mapend.obj");
 	// draw in wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -140,7 +143,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, -0.65f, 0.0f)); // translate it down so it's at the center of the scene
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));	// it's a bit too big for our scene, so scale it down
 		ourShader.setMat4("model", model);
-	//	ourModel.Draw(ourShader);
+		ourModel.Draw(ourShader);
 
 		glm::mat4 model2;
 		model2 = glm::rotate(model2, 3.f, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -151,13 +154,31 @@ int main()
 	//	ourModel2.Draw(ourShader);
 		
 		glm::mat4 model3;
-		model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 1.0f, 0.0f));
-		model3 = glm::translate(model3, glm::vec3(-0.01f, -0.1f, 0.0f)); // translate it down so it's at the center of the scene
-//		model3 = glm::scale(model3, glm::vec3(5.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+	//	model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 0.0f, 0.0f));
+		model3 = glm::translate(model3, glm::vec3(-0.75f, -1.5f, 0.0f)); // translate it down so it's at the center of the scene
+		model3 = glm::scale(model3, glm::vec3(0.65f, 0.50f, 0.50f));	// it's a bit too big for our scene, so scale it down
 
 		ourShader.setMat4("model", model3);
 		ourModel3.Draw(ourShader);
+		
+		glm::mat4 model4;
+		model4 = glm::translate(model4, glm::vec3(-0.75f, -1.5f, -5.38f)); // translate it down so it's at the center of the scene
+		model4 = glm::scale(model4, glm::vec3(0.65f, 0.50f, 0.50f));
+		ourShader.setMat4("model", model4);
+		ourModel4.Draw(ourShader);
 
+		glm::mat4 model5;
+		model5 = glm::translate(model5, glm::vec3(0.05f, -1.5f, -9.38f)); // translate it down so it's at the center of the scene
+		model5 = glm::scale(model5, glm::vec3(0.65f, 0.50f, 0.50f));
+		ourShader.setMat4("model", model5);
+		ourModel5.Draw(ourShader);
+
+		glm::mat4 model6;
+		model6 = glm::rotate(model6, 3.15f, glm::vec3(0.0f, 1.0f, 0.0f));
+		model6 = glm::translate(model6, glm::vec3(0.05f, -1.5f, -2.0f)); // translate it down so it's at the center of the scene
+		model6 = glm::scale(model6, glm::vec3(0.65f, 0.50f, 0.50f));
+		ourShader.setMat4("model", model6);
+		ourModel6.Draw(ourShader);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------

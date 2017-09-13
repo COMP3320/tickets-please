@@ -1,1 +1,14 @@
-﻿  GLFW_EXAMPLE.vcxproj -> C:\Users\Tristan\Documents\GitHub\tickets-please\src\tickets-please\Debug\GLFW_EXAMPLE.exe
+﻿  main.cpp
+c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\shader.h(67): warning C4101: 'infoLog': unreferenced local variable
+c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\shader.h(66): warning C4101: 'success': unreferenced local variable
+c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(112): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(227): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(228): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(232): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(233): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(235): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(236): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(245): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+main.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  GLFW_EXAMPLE.vcxproj -> C:\Users\Tristan\Documents\GitHub\tickets-please\src\tickets-please\Debug\GLFW_EXAMPLE.exe
