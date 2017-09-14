@@ -29,7 +29,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, -4.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -53,7 +53,7 @@ int main()
 
 														 // glfw window creation
 														 // --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Tickets, Please", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -90,15 +90,11 @@ int main()
 	// load models
 	// -----------
 
-//	Model ourModel("../nanosuit/nanosuit.obj");
-//	Model ourModel2("../nanosuit/nanosuit.obj");
 	Model ourModel3("../objects/map2.obj");
 	Model ourModel4("../objects/map2.obj");
 	Model ourModel5("../objects/mapend.obj");
 	Model ourModel6("../objects/mapend.obj");
-	// draw in wireframe
-//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-//	Model ourModel("../objects/chairTest.obj");
+
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -127,28 +123,6 @@ int main()
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
 
-	/*	glm::vec4 light_position = glm::vec4(0, 0.5, 0, 1);
-		ourShader.setVec4("light_position", light_position);
-
-		glm::vec4 light_colour(1, 1, 1, 1);
-		ourShader.setVec4("light_colour", light_colour);
-		*/
-		// render the loaded model
-/*		glm::mat4 model;
-
-		model = glm::translate(model, glm::vec3(0.0f, -0.65f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));	// it's a bit too big for our scene, so scale it down
-		ourShader.setMat4("model", model);
-		ourModel.Draw(ourShader);
-
-		glm::mat4 model2;
-		model2 = glm::rotate(model2, 3.f, glm::vec3(0.0f, 1.0f, 0.0f));
-		model2 = glm::translate(model2, glm::vec3(0.0f, -0.65f, 0.5f)); // translate it down so it's at the center of the scene
-		model2 = glm::scale(model2, glm::vec3(0.05f, 0.05f, 0.05f));	// it's a bit too big for our scene, so scale it down
-
-		ourShader.setMat4("model", model2);
-	//	ourModel2.Draw(ourShader);
-	*/	
 		glm::mat4 model3;
 	//	model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 		model3 = glm::translate(model3, glm::vec3(-0.75f, -1.5f, 0.0f)); // translate it down so it's at the center of the scene
@@ -176,12 +150,6 @@ int main()
 		ourShader.setMat4("model", model6);
 		ourModel6.Draw(ourShader);
 
-//		glm::mat4 model;
-
-	//	model = glm::translate(model, glm::vec3(0.0f, -0.65f, 0.0f)); // translate it down so it's at the center of the scene
-	//	model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));	// it's a bit too big for our scene, so scale it down
-//		ourShader.setMat4("model", model);
-//		ourModel.Draw(ourShader);
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);

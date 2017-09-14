@@ -85,10 +85,14 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\objects\endTest.png" />
+    <Image Include="..\objects\floorTest.png" />
     <Image Include="..\objects\PoleUV.png" />
     <Image Include="..\objects\PoleUV_out.png" />
+    <Image Include="..\objects\test.png" />
     <Image Include="..\objects\testUV.png" />
     <Image Include="..\objects\testUV_out.png" />
+    <Image Include="..\objects\wallTest.png" />
     <Image Include="arm_dif.png" />
     <Image Include="arm_showroom_ddn.png" />
     <Image Include="arm_showroom_spec.png" />
@@ -111,8 +115,10 @@
   <ItemGroup>
     <None Include="..\objects\basicmap.mtl" />
     <None Include="..\objects\chairTest.mtl" />
+    <None Include="..\objects\endWall.mtl" />
     <None Include="..\objects\Map.mtl" />
     <None Include="..\objects\map2.mtl" />
+    <None Include="..\objects\mapend.mtl" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
     <None Include="shader.frag" />
@@ -131,10 +137,16 @@
     <Object Include="..\objects\chairTest.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
+    <Object Include="..\objects\endWall.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
     <Object Include="..\objects\Map.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\objects\map2.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\objects\mapend.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="nanosuit.obj">
