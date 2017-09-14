@@ -115,6 +115,9 @@
     <None Include="..\objects\map2.mtl">
       <Filter>Resource Files\objects</Filter>
     </None>
+    <None Include="..\objects\chairTest.mtl">
+      <Filter>Resource Files\objects</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -141,6 +144,9 @@
       <Filter>Resource Files\objects</Filter>
     </Object>
     <Object Include="..\objects\map2.obj">
+      <Filter>Resource Files\objects</Filter>
+    </Object>
+    <Object Include="..\objects\chairTest.obj">
       <Filter>Resource Files\objects</Filter>
     </Object>
   </ItemGroup>

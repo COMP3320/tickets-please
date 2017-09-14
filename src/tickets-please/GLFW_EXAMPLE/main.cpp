@@ -89,20 +89,16 @@ int main()
 
 	// load models
 	// -----------
-	std::ifstream in("nanosuit.obj");
-	std::string contents((std::istreambuf_iterator<char>(in)),
-		std::istreambuf_iterator<char>());
-	const char* objSource = contents.c_str();
 
-	Model ourModel("../nanosuit/nanosuit.obj");
+//	Model ourModel("../nanosuit/nanosuit.obj");
 //	Model ourModel2("../nanosuit/nanosuit.obj");
 	Model ourModel3("../objects/map2.obj");
 	Model ourModel4("../objects/map2.obj");
 	Model ourModel5("../objects/mapend.obj");
 	Model ourModel6("../objects/mapend.obj");
 	// draw in wireframe
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
+//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//	Model ourModel("../objects/chairTest.obj");
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -138,7 +134,7 @@ int main()
 		ourShader.setVec4("light_colour", light_colour);
 		*/
 		// render the loaded model
-		glm::mat4 model;
+/*		glm::mat4 model;
 
 		model = glm::translate(model, glm::vec3(0.0f, -0.65f, 0.0f)); // translate it down so it's at the center of the scene
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));	// it's a bit too big for our scene, so scale it down
@@ -152,7 +148,7 @@ int main()
 
 		ourShader.setMat4("model", model2);
 	//	ourModel2.Draw(ourShader);
-		
+	*/	
 		glm::mat4 model3;
 	//	model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 		model3 = glm::translate(model3, glm::vec3(-0.75f, -1.5f, 0.0f)); // translate it down so it's at the center of the scene
@@ -180,6 +176,12 @@ int main()
 		ourShader.setMat4("model", model6);
 		ourModel6.Draw(ourShader);
 
+//		glm::mat4 model;
+
+	//	model = glm::translate(model, glm::vec3(0.0f, -0.65f, 0.0f)); // translate it down so it's at the center of the scene
+	//	model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));	// it's a bit too big for our scene, so scale it down
+//		ourShader.setMat4("model", model);
+//		ourModel.Draw(ourShader);
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);

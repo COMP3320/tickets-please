@@ -10,6 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd testUV_out.png
 
 newmtl Material.003
 Ns 96.078431
@@ -20,6 +21,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd poleUV_out.png
 
 newmtl Material.004
 Ns 96.078431
@@ -30,6 +32,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd wallTest.png
 
 newmtl Material.005
 Ns 96.078431
@@ -40,3 +43,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
+map_Kd floorTest.png
+map_Bump floorTest.png
+map_Ks floorTest.png
