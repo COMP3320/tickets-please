@@ -40,6 +40,6 @@ void main()
 	vec4 ambient = vec4(0.3,0.3,0.3,0.01);
     
     //Final total colour including diffuse, specular, ambient, falloff (with 1/d^2), texture and colour
-//    FragColor =  ((diffuse + specular) * (1/(d*d)) + ambient) * texture(tex, TexCoords) * vec4(Colour, 1.0);
+	//FragColor =  ((diffuse + specular) * (1/(d*d)) + ambient) * texture(tex, TexCoords) * vec4(Colour, 1.0);
 }
 
