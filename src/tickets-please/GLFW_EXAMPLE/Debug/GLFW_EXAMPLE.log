@@ -1,2 +1,15 @@
-﻿  GLFW_EXAMPLE.vcxproj -> C:\Users\Elricos\Repos\Graph\tickets-please\src\tickets-please\Debug\GLFW_EXAMPLE1.exe
+﻿  main.cpp
+c:\users\elricos\repos\graph\tickets-please\src\tickets-please\glfw_example\shader.h(67): warning C4101: 'infoLog': unreferenced local variable
+c:\users\elricos\repos\graph\tickets-please\src\tickets-please\glfw_example\shader.h(66): warning C4101: 'success': unreferenced local variable
+c:\users\elricos\repos\graph\tickets-please\src\tickets-please\glfw_example\main.cpp(105): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\elricos\repos\graph\tickets-please\src\tickets-please\glfw_example\main.cpp(198): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\elricos\repos\graph\tickets-please\src\tickets-please\glfw_example\main.cpp(199): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\elricos\repos\graph\tickets-please\src\tickets-please\glfw_example\main.cpp(203): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\elricos\repos\graph\tickets-please\src\tickets-please\glfw_example\main.cpp(204): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\elricos\repos\graph\tickets-please\src\tickets-please\glfw_example\main.cpp(206): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\elricos\repos\graph\tickets-please\src\tickets-please\glfw_example\main.cpp(207): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\elricos\repos\graph\tickets-please\src\tickets-please\glfw_example\main.cpp(216): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+main.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  GLFW_EXAMPLE.vcxproj -> C:\Users\Elricos\Repos\Graph\tickets-please\src\tickets-please\Debug\GLFW_EXAMPLE1.exe
   GLFW_EXAMPLE.vcxproj -> C:\Users\Elricos\Repos\Graph\tickets-please\src\tickets-please\Debug\GLFW_EXAMPLE1.pdb (Full PDB)

@@ -14,7 +14,7 @@ class Interactable : public Model
 {
 public:
 
-
+	
 private:
 
 }

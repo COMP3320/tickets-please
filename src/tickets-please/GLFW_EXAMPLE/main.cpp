@@ -82,6 +82,7 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LIGHTING);
 
 	// build and compile shaders
 	// -------------------------
