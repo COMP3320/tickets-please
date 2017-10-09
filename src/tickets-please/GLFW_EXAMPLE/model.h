@@ -210,11 +210,11 @@ unsigned int TextureFromFile(const char *path, const string &directory, bool gam
 	glGenTextures(1, &textureID);
 
 	int width, height;
-	unsigned char *data = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+	unsigned char *data = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
 	if (data)
 	{
 		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
