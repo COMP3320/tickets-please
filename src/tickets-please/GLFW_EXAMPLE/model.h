@@ -44,7 +44,18 @@ public:
 			meshes[i].Draw(shader);
 	}
 
+	glm::vec3 getMaxCords()
+	{
+		return maxCords;
+	}
+
+	glm::vec3 getMinCords()
+	{
+		return minCords;
+	}
+
 private:
+	glm::vec3 maxCords, minCords;
 	/*  Functions   */
 	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 	void loadModel(string const &path)
@@ -100,6 +111,32 @@ private:
 			vector.x = mesh->mVertices[i].x;
 			vector.y = mesh->mVertices[i].y;
 			vector.z = mesh->mVertices[i].z;
+
+			if (i == 0 || vector.x > maxCords.x)
+			{
+				maxCords.x = vector.x;
+			}
+			if (i == 0 || vector.y > maxCords.y)
+			{
+				maxCords.y = vector.y;
+			}
+			if (i == 0 || vector.z > maxCords.z)
+			{
+				maxCords.z = vector.z;
+			}
+			if (i == 0 || vector.x > minCords.x)
+			{
+				minCords.x = vector.x;
+			}
+			if (i == 0 || vector.y > minCords.y)
+			{
+				minCords.y = vector.y;
+			}
+			if (i == 0 || vector.z > minCords.z)
+			{
+				minCords.z = vector.z;
+			}
+
 			vertex.Position = vector;
 			// normals
 			vector.x = mesh->mNormals[i].x;
