@@ -1,7 +1,6 @@
 #ifndef SOUND_H
 #define SOUND_H
 
-
 #include "al.h" 
 #include "alc.h" 
 #include <stdio.h>
