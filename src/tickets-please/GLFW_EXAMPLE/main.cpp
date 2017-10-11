@@ -39,6 +39,8 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+
 unsigned int loadCubemap(std::vector<std::string> faces) {
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
@@ -119,14 +121,17 @@ int main()
 
 	// configure global opengl state
 	// -----------------------------
-	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
 	// build and compile shaders
 	// -------------------------
 	Shader ourShader("shader.vert", "shader.frag");
+	Shader lampShader("lamp.vert", "lamp.frag");
 	Shader skyboxShader("cubemap.vert", "cubemap.frag");
 
 	unsigned int skyboxVAO, skyboxVBO;
@@ -135,9 +140,19 @@ int main()
 	glBindVertexArray(skyboxVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
+	// second, configure the light's VAO (VBO stays the same; the vertices are the same for the light object which is also a 3D cube)
+	unsigned int lightVAO;
+	glGenVertexArrays(1, &lightVAO);
+	glBindVertexArray(lightVAO);
+
+	// we only need to bind to the VBO (to link it with glVertexAttribPointer), no need to fill it; the VBO's data already contains all we need (it's already bound, but we do it again for educational purposes)
+	glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 	// load models
 	// -----------
 
@@ -150,6 +165,7 @@ int main()
 	ourShader.use();
 	skyboxShader.use();
 	ourShader.setInt("texture1", 0);
+	
 	skyboxShader.setInt("skybox", 0);
 
 	// render loop
@@ -172,6 +188,9 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		ourShader.use();
+
+		//ourShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+		//ourShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
 		// view/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
@@ -204,6 +223,22 @@ int main()
 		model6 = glm::scale(model6, glm::vec3(0.65f, 0.50f, 0.50f));
 		ourShader.setMat4("model", model6);
 		ourModel6.Draw(ourShader);
+
+		//creating lamp
+		glm::mat4 lampModel;
+		ourShader.setMat4("model", lampModel);
+		// also draw the lamp object
+		lampShader.use();
+		lampShader.setMat4("projection", projection);
+		lampShader.setMat4("view", view);
+		lampModel = glm::mat4();
+		lampModel = glm::translate(lampModel, lightPos);
+		lampModel = glm::scale(lampModel, glm::vec3(0.2f)); // a smaller cube
+		lampShader.setMat4("model", lampModel);
+
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
 		// draw skybox as last
 		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content

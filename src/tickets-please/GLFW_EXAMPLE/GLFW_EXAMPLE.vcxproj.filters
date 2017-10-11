@@ -136,6 +136,12 @@
     <None Include="..\objects\mapend.mtl">
       <Filter>Resource Files\objects</Filter>
     </None>
+    <None Include="lamp.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="lamp.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -151,6 +157,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="interactable.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

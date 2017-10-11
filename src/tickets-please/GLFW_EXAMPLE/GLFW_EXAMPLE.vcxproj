@@ -121,6 +121,8 @@
     <None Include="..\objects\Map.mtl" />
     <None Include="..\objects\map2.mtl" />
     <None Include="..\objects\mapend.mtl" />
+    <None Include="lamp.frag" />
+    <None Include="lamp.vert" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
     <None Include="shader.frag" />
@@ -128,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="light.h" />
     <ClInclude Include="interactable.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
