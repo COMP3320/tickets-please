@@ -153,6 +153,9 @@
     <ClInclude Include="interactable.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="sound.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Object Include="nanosuit.obj">

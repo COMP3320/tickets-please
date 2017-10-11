@@ -12,6 +12,7 @@
 #include "camera.h"
 #include "model.h"
 #include "cubemapVert.h"
+#include "sound.h"
 
 #include <stdio.h>  
 #include <stdlib.h> 
