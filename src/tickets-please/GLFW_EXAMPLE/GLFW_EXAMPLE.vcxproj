@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="keys.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +130,7 @@
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="interactable.h" />
+    <ClInclude Include="keys.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="shader.h" />
