@@ -32,24 +32,33 @@ bool Game::setup() {
 		return false;
 	}
 
-	setupCamera();
+	//setupCamera();
 	setupMenu();
-	setupCubemap();
-	setupState();
-	setupSkybox();
-	setupShaders();
+	//setupCubemap();
+	//setupState();
+	//setupSkybox();
+	//setupShaders();
+
+	glfwSwapInterval(1);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0, 640.0, 480.0, 0.0, -1.0, 1.0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	// load models
 	// -----------
 
-	ourModel3 = new Model("resources/objects/map2.obj");
+	/*ourModel3 = new Model("resources/objects/map2.obj");
 	std::cout << "Loaded ourModel3" << std::endl;
 	ourModel4 = new Model("resources/objects/map2.obj");
 	std::cout << "Loaded ourModel4" << std::endl;
 	ourModel5 = new Model("resources/objects/mapend.obj");
 	std::cout << "Loaded ourModel5" << std::endl;
 	ourModel6 = new Model("resources/objects/mapend.obj");
-	std::cout << "Loaded ourModel6" << std::endl;
+	std::cout << "Loaded ourModel6" << std::endl;*/
 
 	return true;
 }
@@ -136,9 +145,12 @@ bool Game::setupGLFW() {
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+
+	glfwWindowHint(GLFW_SAMPLES, 4); // 4x antialiasing
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // We want OpenGL 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // We don't want the old OpenGL 
 
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
@@ -156,12 +168,13 @@ bool Game::setupGLFW() {
 	}
 
 	glfwMakeContextCurrent(window);
-	glewExperimental = GL_TRUE;
 
 	return true;
 }
 
 bool Game::setupGLEW() {
+	glewExperimental = GL_TRUE;
+
 	// glad: load all OpenGL function pointers
 	// ---------------------------------------
 	GLenum err = glewInit();
@@ -173,6 +186,10 @@ bool Game::setupGLEW() {
 
 		return false;
 	}
+
+	GLuint VertexArrayID;
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
 
 	return true;
 }
@@ -315,7 +332,7 @@ void Game::prepareOutput() {
 		// Tell GLFW to release our mouse
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-		glDisable(GL_DEPTH_TEST);
+		//glDisable(GL_DEPTH_TEST);
 
 		menu->render();
 	}

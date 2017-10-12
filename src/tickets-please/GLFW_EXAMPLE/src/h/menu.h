@@ -4,6 +4,17 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <fstream>
+
+#include <ctime> 
+#include <stdio.h>  
+#include <stdlib.h> 
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <SOIL.h>
+#include <iostream>
+#include <string>
+#include <vector>
 
 class Menu
 {
@@ -16,9 +27,10 @@ public:
 	void render();
 
 private:
-	bool visible = false;
+	bool visible;
 	GLFWwindow* window;
 	GLuint vertexBuffer;
+	GLuint programId;
 };
 
 #endif
