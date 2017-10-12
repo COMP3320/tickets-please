@@ -12,6 +12,7 @@
 #include "camera.h"
 #include "model.h"
 #include "cubemapVert.h"
+#include "boundbox.h"
 
 #include <stdio.h>  
 #include <stdlib.h> 
@@ -23,7 +24,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
+void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLength);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -120,8 +121,8 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_REPLACE);
+//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// build and compile shaders
 	// -------------------------
@@ -140,11 +141,22 @@ int main()
 	// load models
 	// -----------
 
-	Model ourModel3("../objects/map2.obj");
-	Model ourModel4("../objects/map2.obj");
-	Model ourModel5("../objects/mapend.obj");
-	Model ourModel6("../objects/mapend.obj");
+	Model ourModel("../objects/MapDemo2.obj");
+	Model chairSet1("../objects/chairTest.obj");
+	Model chairSet2("../objects/chairTest.obj");
+	Model chairSet3("../objects/chairTest.obj");
+	Model chairSet4("../objects/chairTest.obj");
+	Model person("../objects/person.obj");
+	BoundBox bb[5] = {	BoundBox(glm::vec3(7.1f, 2.0f, -5.7f), glm::vec3(1.3, -2.0f, -7.8f)),
+						BoundBox(glm::vec3(-1.1f, 2.0f, -5.7f), glm::vec3(-7.3, -2.0f, -7.8f)),
+						BoundBox(glm::vec3(-1.1f, 2.0f, -1.2f), glm::vec3(-7.3, -2.0f, -3.0f)),
+						BoundBox(glm::vec3(7.1f, 2.0f, -1.2f), glm::vec3(1.3f, -2.0f, -3.0f)),
+						BoundBox(glm::vec3(6.6f, 2.0f, -3.3f), glm::vec3(5.0f, -2.0f, -5.7f))
+	};
 
+	BoundBox areaMap(glm::vec3(7.75f, 2.0f, -1.2f), glm::vec3(-7.75f, -2.0f, -7.8f));
+//	BoundBox areaMap(glm::vec3(20.75f, 2.0f, 20.2f), glm::vec3(-20.75f, -2.0f, -20.8f));
+//	BoundBox bb(ourModel.getMaxCords(), ourModel.getMinCords());
 	// don't forget to enable shader before setting uniforms
 	ourShader.use();
 	skyboxShader.use();
@@ -163,7 +175,7 @@ int main()
 
 		// input
 		// -----
-		processInput(window);
+		processInput(window, areaMap, bb, sizeof(bb)/sizeof(bb[0]));
 
 		// render
 		// ------
@@ -177,32 +189,42 @@ int main()
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
 
-		glm::mat4 model3;
-	//	model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 0.0f, 0.0f));
-		model3 = glm::translate(model3, glm::vec3(-0.75f, -1.5f, 0.0f)); // translate it down so it's at the center of the scene
-		model3 = glm::scale(model3, glm::vec3(0.65f, 0.50f, 0.50f));	// it's a bit too big for our scene, so scale it down
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(0.0f, -1.0f, -4.5f));
+	//	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
+		ourShader.setMat4("model", model);
+		ourModel.Draw(ourShader);
 
+		glm::mat4 model2;
+		model2 = glm::rotate(model2, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
+		model2 = glm::translate(model2, glm::vec3(7.0f, -3.0f, 4.5f));
+		ourShader.setMat4("model", model2);
+		chairSet1.Draw(ourShader);
+
+		glm::mat4 model3;
+		model3 = glm::rotate(model3, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
+		model3 = glm::translate(model3, glm::vec3(-2.0f, -3.0f, 4.0f));
 		ourShader.setMat4("model", model3);
-		ourModel3.Draw(ourShader);
-		
+		chairSet2.Draw(ourShader);
+
 		glm::mat4 model4;
-		model4 = glm::translate(model4, glm::vec3(-0.75f, -1.5f, -5.38f)); // translate it down so it's at the center of the scene
-		model4 = glm::scale(model4, glm::vec3(0.65f, 0.50f, 0.50f));
+		model4 = glm::rotate(model4, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
+		model4 = glm::translate(model4, glm::vec3(-2.0f, -3.0f, -4.25f));
 		ourShader.setMat4("model", model4);
-		ourModel4.Draw(ourShader);
+		chairSet3.Draw(ourShader);
 
 		glm::mat4 model5;
-		model5 = glm::translate(model5, glm::vec3(0.05f, -1.5f, -9.38f)); // translate it down so it's at the center of the scene
-		model5 = glm::scale(model5, glm::vec3(0.65f, 0.50f, 0.50f));
+		model5 = glm::rotate(model5, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
+		model5 = glm::translate(model5, glm::vec3(7.0f, -3.0f, -4.0f));
 		ourShader.setMat4("model", model5);
-		ourModel5.Draw(ourShader);
+		chairSet4.Draw(ourShader);
 
 		glm::mat4 model6;
-		model6 = glm::rotate(model6, 3.15f, glm::vec3(0.0f, 1.0f, 0.0f));
-		model6 = glm::translate(model6, glm::vec3(0.05f, -1.5f, -2.0f)); // translate it down so it's at the center of the scene
-		model6 = glm::scale(model6, glm::vec3(0.65f, 0.50f, 0.50f));
+		model6 = glm::scale(model6, glm::vec3(0.4f, 0.4f, 0.4f));
+		model6 = glm::translate(model6, glm::vec3(14.0f, -7.5f, -11.5f));
+		model6 = glm::rotate(model6, 1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
 		ourShader.setMat4("model", model6);
-		ourModel6.Draw(ourShader);
+		person.Draw(ourShader);
 
 		// draw skybox as last
 		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -235,7 +257,7 @@ int main()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLength)
 {
 	int speed = 1;
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -248,14 +270,14 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
 		camera.setCrouch(false);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime * speed);
+		camera.ProcessKeyboard(FORWARD, deltaTime * speed, areaMap, bb, arrLength);
 
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime * speed);
+		camera.ProcessKeyboard(BACKWARD, deltaTime * speed, areaMap, bb, arrLength);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime * speed);
+		camera.ProcessKeyboard(LEFT, deltaTime * speed, areaMap, bb, arrLength);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime * speed);
+		camera.ProcessKeyboard(RIGHT, deltaTime * speed, areaMap, bb, arrLength);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

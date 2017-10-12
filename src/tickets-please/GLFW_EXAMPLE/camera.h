@@ -6,7 +6,7 @@
 #include <GL/glew.h>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-
+#include "boundbox.h"
 #include <vector>
 
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
@@ -43,7 +43,7 @@ public:
 	float MovementSpeed;
 	float MouseSensitivity;
 	float Zoom;
-
+		
 	bool isCrouched;
 
 	// Constructor with vectors
@@ -73,17 +73,72 @@ public:
 	}
 
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-	void ProcessKeyboard(Camera_Movement direction, float deltaTime)
-	{
+	void ProcessKeyboard(Camera_Movement direction, float deltaTime, BoundBox areaMap, BoundBox bb[], int arrLength)
+	{	// && Position.x >= (bb.getMin()).x >= Position.x && Position.x <= (bb.getMax()).x && Position.z >= (bb.getMin()).z && Position.z <= (bb.getMax()).z
 		float velocity = MovementSpeed * deltaTime;
+		glm::vec3 pos1, pos2, pos3, pos4;
+		pos1 = (Position + Front*velocity);
+		pos2 = Position - Front*velocity;
+		pos3 = Position - Right * velocity;
+		pos4 = Position + Right * velocity;
+		bool boundCheck = boundaryCheck(direction, areaMap, bb, arrLength, pos1, pos2, pos3, pos4);
+		std::cout << "Curr position x " << Position.x << "Curr position y " << Position.y << "Curr position z " << Position.z << std::endl;
+//		std::cout << "Max x " << bb[1].getMax().x << "Min x " << bb[1].getMin().x << "Max y " << bb[1].getMax().y << "Min y " << bb[1].getMin().y << "Max z " << bb[1].getMax().z << "Min z " << bb[1].getMin().z << std::endl;
+		if (direction == FORWARD && boundCheck)
+		{
+			Position = pos1;
+		}
+		if (direction == BACKWARD && boundCheck)
+		{
+			Position = pos2;
+		}
+		if (direction == LEFT && boundCheck)
+		{
+			Position = pos3;
+		}
+		if (direction == RIGHT && boundCheck)
+		{
+			Position = pos4;
+		}
+					
+	}
+
+	bool boundaryCheck(Camera_Movement direction, BoundBox areaMap, BoundBox bb[], int arrLength, glm::vec3 pos1, glm::vec3 pos2, glm::vec3 pos3, glm::vec3 pos4)
+	{
+		bool boundCheck = true;
 		if (direction == FORWARD)
-			Position += Front * velocity;
+		{
+			boundCheck = boundCheck && (pos1.x < areaMap.getMax().x && pos1.x > areaMap.getMin().x && pos1.z < areaMap.getMax().z && pos1.z > areaMap.getMin().z);
+			for (int i = 0; i < arrLength; i++)
+			{
+				boundCheck = boundCheck && !(pos1.x < bb[i].getMax().x && pos1.x > bb[i].getMin().x && pos1.z < bb[i].getMax().z && pos1.z > bb[i].getMin().z);
+			}
+		}
 		if (direction == BACKWARD)
-			Position -= Front * velocity;
+		{
+			boundCheck = boundCheck && (pos2.x < areaMap.getMax().x && pos2.x > areaMap.getMin().x && pos2.z < areaMap.getMax().z && pos2.z > areaMap.getMin().z);
+			for (int i = 0; i < arrLength; i++)
+			{
+				boundCheck = boundCheck && !(pos2.x < bb[i].getMax().x && pos2.x > bb[i].getMin().x && pos2.z < bb[i].getMax().z && pos2.z > bb[i].getMin().z);
+			}
+		}
 		if (direction == LEFT)
-			Position -= Right * velocity;
+		{
+			boundCheck = boundCheck && (pos3.x < areaMap.getMax().x && pos3.x > areaMap.getMin().x && pos3.z < areaMap.getMax().z && pos3.z > areaMap.getMin().z);
+			for (int i = 0; i < arrLength; i++)
+			{
+				boundCheck = boundCheck && !(pos3.x < bb[i].getMax().x && pos3.x > bb[i].getMin().x && pos3.z < bb[i].getMax().z && pos3.z > bb[i].getMin().z);
+			}
+		}
 		if (direction == RIGHT)
-			Position += Right * velocity;		
+		{
+			boundCheck = boundCheck && (pos4.x < areaMap.getMax().x && pos4.x > areaMap.getMin().x && pos4.z < areaMap.getMax().z && pos4.z > areaMap.getMin().z);
+			for (int i = 0; i < arrLength; i++)
+			{
+				boundCheck = boundCheck && !(pos4.x < bb[i].getMax().x && pos4.x > bb[i].getMin().x && pos4.z < bb[i].getMax().z && pos4.z > bb[i].getMin().z);
+			}
+		}
+		return boundCheck;
 	}
 
 	void setCrouch(bool setting) {

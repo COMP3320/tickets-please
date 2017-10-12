@@ -115,6 +115,7 @@ private:
 			if (i == 0 || vector.x > maxCords.x)
 			{
 				maxCords.x = vector.x;
+
 			}
 			if (i == 0 || vector.y > maxCords.y)
 			{
@@ -124,15 +125,15 @@ private:
 			{
 				maxCords.z = vector.z;
 			}
-			if (i == 0 || vector.x > minCords.x)
+			if (i == 0 || vector.x < minCords.x)
 			{
 				minCords.x = vector.x;
 			}
-			if (i == 0 || vector.y > minCords.y)
+			if (i == 0 || vector.y < minCords.y)
 			{
 				minCords.y = vector.y;
 			}
-			if (i == 0 || vector.z > minCords.z)
+			if (i == 0 || vector.z < minCords.z)
 			{
 				minCords.z = vector.z;
 			}

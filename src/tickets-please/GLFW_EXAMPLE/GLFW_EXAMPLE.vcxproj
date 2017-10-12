@@ -89,11 +89,13 @@
   <ItemGroup>
     <Image Include="..\objects\endTest.png" />
     <Image Include="..\objects\floorTest.png" />
+    <Image Include="..\objects\Material Diffuse Color.png" />
     <Image Include="..\objects\PoleUV.png" />
     <Image Include="..\objects\PoleUV_out.png" />
     <Image Include="..\objects\test.png" />
     <Image Include="..\objects\testUV.png" />
     <Image Include="..\objects\testUV_out.png" />
+    <Image Include="..\objects\UVShit.png" />
     <Image Include="..\objects\wallTest.png" />
     <Image Include="arm_dif.png" />
     <Image Include="arm_showroom_ddn.png" />
@@ -120,13 +122,17 @@
     <None Include="..\objects\endWall.mtl" />
     <None Include="..\objects\Map.mtl" />
     <None Include="..\objects\map2.mtl" />
+    <None Include="..\objects\MapDemo2.mtl" />
     <None Include="..\objects\mapend.mtl" />
+    <None Include="..\objects\person.mtl" />
+    <None Include="..\objects\Train.mtl" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
     <None Include="shader.frag" />
     <None Include="shader.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="boundbox.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="interactable.h" />
     <ClInclude Include="mesh.h" />
@@ -149,7 +155,16 @@
     <Object Include="..\objects\map2.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
+    <Object Include="..\objects\MapDemo2.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
     <Object Include="..\objects\mapend.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\objects\person.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\objects\Train.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="nanosuit.obj">
