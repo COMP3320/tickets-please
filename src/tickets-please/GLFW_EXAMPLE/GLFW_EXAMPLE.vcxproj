@@ -54,12 +54,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>"$(ProgramFiles)\OpenAL 1.1 SDK\include";$(ProjectDir)\soil\src;$(ProjectDir)\glew\include;$(ProjectDir)\glfw\include;$(ProjectDir)\assimp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProgramFiles)\OpenAL 1.1 SDK\include;$(ProjectDir)\glew\include;$(ProjectDir)\glfw\include;$(ProjectDir)\src\h;$(ProjectDir);$(ProjectDir)\assimp\include;$(ProjectDir)\soil\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>"$(ProgramFiles)\OpenAL 1.1 SDK\libs\Win32";$(ProjectDir)\..\Debug;$(ProjectDir)\glew\lib;$(ProjectDir)\glfw\lib-msvc100;$(ProjectDir)\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>"$(ProgramFiles)\OpenAL 1.1 SDK\libs\Win32";$(ProjectDir)\..\$(Configuration);$(ProjectDir)\glew\lib;$(ProjectDir)\glfw\lib-msvc100;$(ProjectDir)\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>legacy_stdio_definitions.lib;SOIL.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;assimp-vc130-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -72,102 +72,104 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>"$(ProgramFiles)\OpenAL 1.1 SDK\include";$(ProjectDir)\glew\include;$(ProjectDir)\glfw\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProgramFiles)\OpenAL 1.1 SDK\include;$(ProjectDir)\glew\include;$(ProjectDir)\glfw\include;$(ProjectDir)\src\h;$(ProjectDir);$(ProjectDir)\assimp\include;$(ProjectDir)\soil\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>"$(ProgramFiles)\OpenAL 1.1 SDK\libs\Win32";$(ProjectDir)\glew\lib;$(ProjectDir)\glfw\lib-msvc110;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;OpenAL32.lib;ALut.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>"$(ProgramFiles)\OpenAL 1.1 SDK\libs\Win32";$(ProjectDir)\..\$(Configuration);$(ProjectDir)\glew\lib;$(ProjectDir)\glfw\lib-msvc100;$(ProjectDir)\assimp\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>legacy_stdio_definitions.lib;SOIL.lib;opengl32.lib;glu32.lib;glew32.lib;glfw3.lib;assimp-vc130-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="camera.cpp" />
-    <ClCompile Include="game.cpp" />
-    <ClCompile Include="interactable.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="menu.cpp" />
-    <ClCompile Include="mesh.cpp" />
-    <ClCompile Include="model.cpp" />
-    <ClCompile Include="shader.cpp" />
-    <ClCompile Include="sound.cpp" />
+    <ClCompile Include="src\cpp\camera.cpp" />
+    <ClCompile Include="src\cpp\game.cpp" />
+    <ClCompile Include="src\cpp\interactable.cpp" />
+    <ClCompile Include="src\cpp\main.cpp" />
+    <ClCompile Include="src\cpp\menu.cpp" />
+    <ClCompile Include="src\cpp\mesh.cpp" />
+    <ClCompile Include="src\cpp\model.cpp" />
+    <ClCompile Include="src\cpp\shader.cpp" />
+    <ClCompile Include="src\cpp\sound.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\objects\endTest.png" />
-    <Image Include="..\objects\floorTest.png" />
-    <Image Include="..\objects\PoleUV.png" />
-    <Image Include="..\objects\PoleUV_out.png" />
-    <Image Include="..\objects\test.png" />
-    <Image Include="..\objects\testUV.png" />
-    <Image Include="..\objects\testUV_out.png" />
-    <Image Include="..\objects\wallTest.png" />
-    <Image Include="arm_dif.png" />
-    <Image Include="arm_showroom_ddn.png" />
-    <Image Include="arm_showroom_spec.png" />
-    <Image Include="body_dif.png" />
-    <Image Include="body_showroom_ddn.png" />
-    <Image Include="body_showroom_spec.png" />
-    <Image Include="glass_ddn.png" />
-    <Image Include="glass_dif.png" />
-    <Image Include="hand_dif.png" />
-    <Image Include="hand_showroom_ddn.png" />
-    <Image Include="hand_showroom_spec.png" />
-    <Image Include="helmet_diff.png" />
-    <Image Include="helmet_showroom_ddn.png" />
-    <Image Include="helmet_showroom_spec.png" />
-    <Image Include="kitten.png" />
-    <Image Include="leg_dif.png" />
-    <Image Include="leg_showroom_ddn.png" />
-    <Image Include="leg_showroom_spec.png" />
+    <Image Include="resources\objects\endTest.png" />
+    <Image Include="resources\objects\floorTest.png" />
+    <Image Include="resources\objects\PoleUV.png" />
+    <Image Include="resources\objects\PoleUV_out.png" />
+    <Image Include="resources\objects\test.png" />
+    <Image Include="resources\objects\testUV.png" />
+    <Image Include="resources\objects\testUV_out.png" />
+    <Image Include="resources\objects\wallTest.png" />
+    <Image Include="resources\objects\nanosuit\arm_dif.png" />
+    <Image Include="resources\objects\nanosuit\arm_showroom_ddn.png" />
+    <Image Include="resources\objects\nanosuit\arm_showroom_spec.png" />
+    <Image Include="resources\objects\nanosuit\body_dif.png" />
+    <Image Include="resources\objects\nanosuit\body_showroom_ddn.png" />
+    <Image Include="resources\objects\nanosuit\body_showroom_spec.png" />
+    <Image Include="resources\objects\nanosuit\glass_ddn.png" />
+    <Image Include="resources\objects\nanosuit\glass_dif.png" />
+    <Image Include="resources\objects\nanosuit\hand_dif.png" />
+    <Image Include="resources\objects\nanosuit\hand_showroom_ddn.png" />
+    <Image Include="resources\objects\nanosuit\hand_showroom_spec.png" />
+    <Image Include="resources\objects\nanosuit\helmet_diff.png" />
+    <Image Include="resources\objects\nanosuit\helmet_showroom_ddn.png" />
+    <Image Include="resources\objects\nanosuit\helmet_showroom_spec.png" />
+    <Image Include="resources\objects\nanosuit\kitten.png" />
+    <Image Include="resources\objects\nanosuit\leg_dif.png" />
+    <Image Include="resources\objects\nanosuit\leg_showroom_ddn.png" />
+    <Image Include="resources\objects\nanosuit\leg_showroom_spec.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\objects\basicmap.mtl" />
-    <None Include="..\objects\chairTest.mtl" />
-    <None Include="..\objects\endWall.mtl" />
-    <None Include="..\objects\Map.mtl" />
-    <None Include="..\objects\map2.mtl" />
-    <None Include="..\objects\mapend.mtl" />
-    <None Include="cubemap.frag" />
-    <None Include="cubemap.vert" />
-    <None Include="nanosuit.blend" />
-    <None Include="nanosuit.mtl" />
-    <None Include="shader.frag" />
-    <None Include="shader.vert" />
+    <None Include="resources\objects\basicmap.mtl" />
+    <None Include="resources\objects\chairTest.mtl" />
+    <None Include="resources\objects\endWall.mtl" />
+    <None Include="resources\objects\Map.mtl" />
+    <None Include="resources\objects\map2.mtl" />
+    <None Include="resources\objects\mapend.mtl" />
+    <None Include="resources\objects\nanosuit\nanosuit.blend" />
+    <None Include="resources\objects\nanosuit\nanosuit.mtl" />
+    <None Include="resources\shaders\cubemap\shader.frag" />
+    <None Include="resources\shaders\cubemap\shader.vert" />
+    <None Include="resources\shaders\default\shader.frag" />
+    <None Include="resources\shaders\default\shader.vert" />
+    <None Include="resources\shaders\menu\shader.frag" />
+    <None Include="resources\shaders\menu\shader.vert" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="boundbox.h" />
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="interactable.h" />
-    <ClInclude Include="menu.h" />
-    <ClInclude Include="mesh.h" />
-    <ClInclude Include="model.h" />
-    <ClInclude Include="shader.h" />
-    <ClInclude Include="sound.h" />
+    <ClInclude Include="src\h\boundbox.h" />
+    <ClInclude Include="src\h\camera.h" />
+    <ClInclude Include="src\h\game.h" />
+    <ClInclude Include="src\h\interactable.h" />
+    <ClInclude Include="src\h\menu.h" />
+    <ClInclude Include="src\h\mesh.h" />
+    <ClInclude Include="src\h\model.h" />
+    <ClInclude Include="src\h\shader.h" />
+    <ClInclude Include="src\h\sound.h" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="..\objects\basicmap.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <Object Include="resources\objects\basicmap.obj">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </Object>
-    <Object Include="..\objects\chairTest.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <Object Include="resources\objects\chairTest.obj">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </Object>
-    <Object Include="..\objects\endWall.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <Object Include="resources\objects\endWall.obj">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </Object>
-    <Object Include="..\objects\Map.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <Object Include="resources\objects\Map.obj">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </Object>
-    <Object Include="..\objects\map2.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <Object Include="resources\objects\map2.obj">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </Object>
-    <Object Include="..\objects\mapend.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <Object Include="resources\objects\mapend.obj">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </Object>
-    <Object Include="nanosuit.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <Object Include="resources\objects\nanosuit\nanosuit.obj">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </Object>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -33,10 +33,10 @@
   C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
 ..\..\src\stb_image_aug.c(3644): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-d:\university\casual teaching\comp3320\tutorials\models\lab3_code_2016_solution\labw4_code_solution\glfw_example\glfw_example\soil\src\stbi_DDS_aug_c.h(362): warning C4018: '>': signed/unsigned mismatch
-d:\university\casual teaching\comp3320\tutorials\models\lab3_code_2016_solution\labw4_code_solution\glfw_example\glfw_example\soil\src\stbi_DDS_aug_c.h(366): warning C4018: '>': signed/unsigned mismatch
-d:\university\casual teaching\comp3320\tutorials\models\lab3_code_2016_solution\labw4_code_solution\glfw_example\glfw_example\soil\src\stbi_DDS_aug_c.h(390): warning C4018: '<': signed/unsigned mismatch
-d:\university\casual teaching\comp3320\tutorials\models\lab3_code_2016_solution\labw4_code_solution\glfw_example\glfw_example\soil\src\stbi_DDS_aug_c.h(427): warning C4018: '<': signed/unsigned mismatch
-d:\university\casual teaching\comp3320\tutorials\models\lab3_code_2016_solution\labw4_code_solution\glfw_example\glfw_example\soil\src\stbi_DDS_aug_c.h(498): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+d:\users\mitch\documents\university\comp3320\src\tickets-please\src\tickets-please\glfw_example\soil\src\stbi_DDS_aug_c.h(362): warning C4018: '>': signed/unsigned mismatch
+d:\users\mitch\documents\university\comp3320\src\tickets-please\src\tickets-please\glfw_example\soil\src\stbi_DDS_aug_c.h(366): warning C4018: '>': signed/unsigned mismatch
+d:\users\mitch\documents\university\comp3320\src\tickets-please\src\tickets-please\glfw_example\soil\src\stbi_DDS_aug_c.h(390): warning C4018: '<': signed/unsigned mismatch
+d:\users\mitch\documents\university\comp3320\src\tickets-please\src\tickets-please\glfw_example\soil\src\stbi_DDS_aug_c.h(427): warning C4018: '<': signed/unsigned mismatch
+d:\users\mitch\documents\university\comp3320\src\tickets-please\src\tickets-please\glfw_example\soil\src\stbi_DDS_aug_c.h(498): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
-  SOIL.vcxproj -> D:\University\casual teaching\COMP3320\TUTORIALS\models\Lab3_Code_2016_Solution\LabW4_Code_Solution\GLFW_EXAMPLE\Release\SOIL.lib
+  SOIL.vcxproj -> D:\Users\Mitch\Documents\University\COMP3320\src\tickets-please\src\tickets-please\Release\SOIL.lib

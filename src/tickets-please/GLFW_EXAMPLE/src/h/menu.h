@@ -1,6 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -17,6 +18,7 @@ public:
 private:
 	bool visible = false;
 	GLFWwindow* window;
+	GLuint vertexBuffer;
 };
 
 #endif

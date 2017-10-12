@@ -42,13 +42,13 @@ bool Game::setup() {
 	// load models
 	// -----------
 
-	ourModel3 = new Model("../objects/map2.obj");
+	ourModel3 = new Model("resources/objects/map2.obj");
 	std::cout << "Loaded ourModel3" << std::endl;
-	ourModel4 = new Model("../objects/map2.obj");
+	ourModel4 = new Model("resources/objects/map2.obj");
 	std::cout << "Loaded ourModel4" << std::endl;
-	ourModel5 = new Model("../objects/mapend.obj");
+	ourModel5 = new Model("resources/objects/mapend.obj");
 	std::cout << "Loaded ourModel5" << std::endl;
-	ourModel6 = new Model("../objects/mapend.obj");
+	ourModel6 = new Model("resources/objects/mapend.obj");
 	std::cout << "Loaded ourModel6" << std::endl;
 
 	return true;
@@ -190,12 +190,12 @@ void Game::setupMenu() {
 void Game::setupCubemap() {
 	// get cubemap texture
 	std::vector<std::string> faces = {
-		"../objects/skybox/right.tga",
-		"../objects/skybox/left.tga",
-		"../objects/skybox/top.tga",
-		"../objects/skybox/bottom.tga",
-		"../objects/skybox/back.tga",
-		"../objects/skybox/front.tga"
+		"resources/objects/skybox/right.tga",
+		"resources/objects/skybox/left.tga",
+		"resources/objects/skybox/top.tga",
+		"resources/objects/skybox/bottom.tga",
+		"resources/objects/skybox/back.tga",
+		"resources/objects/skybox/front.tga"
 	};
 
 	cubemapTexture = loadCubemap(faces);
@@ -268,12 +268,12 @@ void Game::setupShaders() {
 	// build and compile shaders
 	// don't forget to enable shader before setting uniforms
 	// -------------------------
-	shader = new Shader("shader.vert", "shader.frag");
+	shader = new Shader("resources/shaders/default/shader.vert", "resources/shaders/default/shader.frag");
 
 	shader->use();
 	shader->setInt("texture1", 0);
 
-	skyboxShader = new Shader("cubemap.vert", "cubemap.frag");
+	skyboxShader = new Shader("resources/shaders/cubemap/shader.vert", "resources/shaders/cubemap/shader.frag");
 
 	skyboxShader->use();
 	skyboxShader->setInt("skybox", 0);
@@ -312,7 +312,7 @@ void Game::render() {
 
 void Game::prepareOutput() {
 	if (menu->isVisible()) {
-		// Tell GLFW to capture our mouse
+		// Tell GLFW to release our mouse
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 		glDisable(GL_DEPTH_TEST);

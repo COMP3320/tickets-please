@@ -21,202 +21,166 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\cpp\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game.cpp">
+    <ClCompile Include="src\cpp\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="model.cpp">
+    <ClCompile Include="src\cpp\interactable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="camera.cpp">
+    <ClCompile Include="src\cpp\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="interactable.cpp">
+    <ClCompile Include="src\cpp\menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
+    <ClCompile Include="src\cpp\mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
+    <ClCompile Include="src\cpp\model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="menu.cpp">
+    <ClCompile Include="src\cpp\shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sound.cpp">
+    <ClCompile Include="src\cpp\sound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="arm_dif.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="arm_showroom_ddn.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="arm_showroom_spec.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="body_dif.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="body_showroom_ddn.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="body_showroom_spec.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="glass_ddn.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="glass_dif.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="hand_dif.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="hand_showroom_ddn.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="helmet_diff.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="hand_showroom_spec.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="helmet_showroom_ddn.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="helmet_showroom_spec.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="leg_dif.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="leg_showroom_ddn.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="leg_showroom_spec.png">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Image>
-    <Image Include="kitten.png">
+    <Image Include="resources\objects\endTest.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\objects\PoleUV.png">
-      <Filter>Resource Files\objects</Filter>
+    <Image Include="resources\objects\floorTest.png">
+      <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\objects\PoleUV_out.png">
-      <Filter>Resource Files\objects</Filter>
+    <Image Include="resources\objects\PoleUV.png">
+      <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\objects\testUV.png">
-      <Filter>Resource Files\objects</Filter>
+    <Image Include="resources\objects\PoleUV_out.png">
+      <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\objects\testUV_out.png">
-      <Filter>Resource Files\objects</Filter>
+    <Image Include="resources\objects\test.png">
+      <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\objects\endTest.png">
-      <Filter>Resource Files\objects</Filter>
+    <Image Include="resources\objects\testUV.png">
+      <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\objects\floorTest.png">
-      <Filter>Resource Files\objects</Filter>
+    <Image Include="resources\objects\testUV_out.png">
+      <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\objects\test.png">
-      <Filter>Resource Files\objects</Filter>
+    <Image Include="resources\objects\wallTest.png">
+      <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\objects\wallTest.png">
-      <Filter>Resource Files\objects</Filter>
+    <Image Include="resources\objects\nanosuit\arm_dif.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\arm_showroom_ddn.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\arm_showroom_spec.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\body_dif.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\body_showroom_ddn.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\body_showroom_spec.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\glass_ddn.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\glass_dif.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\hand_dif.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\hand_showroom_ddn.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\hand_showroom_spec.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\helmet_diff.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\helmet_showroom_ddn.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\helmet_showroom_spec.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\kitten.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\leg_dif.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\leg_showroom_ddn.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\objects\nanosuit\leg_showroom_spec.png">
+      <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="nanosuit.blend">
-      <Filter>Resource Files\nanosuit</Filter>
-    </None>
-    <None Include="nanosuit.mtl">
-      <Filter>Resource Files\nanosuit</Filter>
-    </None>
-    <None Include="..\objects\basicmap.mtl">
-      <Filter>Resource Files\objects</Filter>
-    </None>
-    <None Include="..\objects\Map.mtl">
-      <Filter>Resource Files\objects</Filter>
-    </None>
-    <None Include="..\objects\map2.mtl">
-      <Filter>Resource Files\objects</Filter>
-    </None>
-    <None Include="..\objects\chairTest.mtl">
-      <Filter>Resource Files\objects</Filter>
-    </None>
-    <None Include="..\objects\endWall.mtl">
-      <Filter>Resource Files\objects</Filter>
-    </None>
-    <None Include="..\objects\mapend.mtl">
-      <Filter>Resource Files\objects</Filter>
-    </None>
-    <None Include="cubemap.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="cubemap.vert">
-      <Filter>Resource Files</Filter>
-    </None>
+    <None Include="resources\objects\basicmap.mtl" />
+    <None Include="resources\objects\chairTest.mtl" />
+    <None Include="resources\objects\endWall.mtl" />
+    <None Include="resources\objects\Map.mtl" />
+    <None Include="resources\objects\map2.mtl" />
+    <None Include="resources\objects\mapend.mtl" />
+    <None Include="resources\objects\nanosuit\nanosuit.blend" />
+    <None Include="resources\objects\nanosuit\nanosuit.mtl" />
+    <None Include="resources\shaders\cubemap\shader.frag" />
+    <None Include="resources\shaders\cubemap\shader.vert" />
+    <None Include="resources\shaders\default\shader.frag" />
+    <None Include="resources\shaders\default\shader.vert" />
+    <None Include="resources\shaders\menu\shader.frag" />
+    <None Include="resources\shaders\menu\shader.vert" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="game.h">
+    <ClInclude Include="src\h\boundbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="model.h">
+    <ClInclude Include="src\h\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
+    <ClInclude Include="src\h\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="interactable.h">
+    <ClInclude Include="src\h\interactable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="menu.h">
+    <ClInclude Include="src\h\menu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mesh.h">
+    <ClInclude Include="src\h\mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shader.h">
+    <ClInclude Include="src\h\model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sound.h">
+    <ClInclude Include="src\h\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="boundbox.h">
+    <ClInclude Include="src\h\sound.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="nanosuit.obj">
-      <Filter>Resource Files\nanosuit</Filter>
-    </Object>
-    <Object Include="..\objects\basicmap.obj">
-      <Filter>Resource Files\objects</Filter>
-    </Object>
-    <Object Include="..\objects\Map.obj">
-      <Filter>Resource Files\objects</Filter>
-    </Object>
-    <Object Include="..\objects\map2.obj">
-      <Filter>Resource Files\objects</Filter>
-    </Object>
-    <Object Include="..\objects\chairTest.obj">
-      <Filter>Resource Files\objects</Filter>
-    </Object>
-    <Object Include="..\objects\endWall.obj">
-      <Filter>Resource Files\objects</Filter>
-    </Object>
-    <Object Include="..\objects\mapend.obj">
-      <Filter>Resource Files\objects</Filter>
-    </Object>
+    <Object Include="resources\objects\basicmap.obj" />
+    <Object Include="resources\objects\chairTest.obj" />
+    <Object Include="resources\objects\endWall.obj" />
+    <Object Include="resources\objects\Map.obj" />
+    <Object Include="resources\objects\map2.obj" />
+    <Object Include="resources\objects\mapend.obj" />
+    <Object Include="resources\objects\nanosuit\nanosuit.obj" />
   </ItemGroup>
 </Project>
