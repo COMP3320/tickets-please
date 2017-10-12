@@ -35,7 +35,7 @@ bool Game::setup() {
 	setupCamera();
 	setupMenu();
 	setupCubemap();
-	//setupState(); // Causes flashing of triangle on mouse movement
+	setupState(); // Causes flashing of triangle on mouse movement
 	setupSkybox();
 	setupShaders();
 
@@ -52,14 +52,14 @@ bool Game::setup() {
 	// load models
 	// -----------
 
-	/*ourModel3 = new Model("resources/objects/map2.obj");
+	ourModel3 = new Model("resources/objects/map2.obj");
 	std::cout << "Loaded ourModel3" << std::endl;
 	ourModel4 = new Model("resources/objects/map2.obj");
 	std::cout << "Loaded ourModel4" << std::endl;
 	ourModel5 = new Model("resources/objects/mapend.obj");
 	std::cout << "Loaded ourModel5" << std::endl;
 	ourModel6 = new Model("resources/objects/mapend.obj");
-	std::cout << "Loaded ourModel6" << std::endl;*/
+	std::cout << "Loaded ourModel6" << std::endl;
 
 	return true;
 }
@@ -225,8 +225,8 @@ void Game::setupState() {
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void Game::setupSkybox() {
@@ -333,10 +333,11 @@ void Game::render() {
 void Game::prepareOutput() {
 	if (menu->isVisible()) {
 		glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+
 		// Tell GLFW to release our mouse
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-		//glDisable(GL_DEPTH_TEST);
+		glDisable(GL_DEPTH_TEST);
 
 		menu->render();
 	}
@@ -350,7 +351,7 @@ void Game::prepareOutput() {
 		glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		/*shader->use();
+		shader->use();
 
 		// view/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
@@ -398,7 +399,7 @@ void Game::prepareOutput() {
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
-		glDepthFunc(GL_LESS); // set depth function back to default*/
+		glDepthFunc(GL_LESS); // set depth function back to default
 	}
 }
 
