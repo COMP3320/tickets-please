@@ -27,26 +27,27 @@ bool Game::setup() {
 		return false;
 	}
 
-	//Check that we initialised GLEW successfully (loaded all OpenGL function pointers)
+	// Check that we initialised GLEW successfully (loaded all OpenGL function pointers)
 	if (!setupGLEW()) {
 		return false;
 	}
 
-	//setupCamera();
+	setupCamera();
 	setupMenu();
-	//setupCubemap();
-	//setupState();
-	//setupSkybox();
-	//setupShaders();
+	setupCubemap();
+	//setupState(); // Causes flashing of triangle on mouse movement
+	setupSkybox();
+	setupShaders();
 
-	glfwSwapInterval(1);
-
+	// Seemingly unnecessary?
+	/*
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0.0, 640.0, 480.0, 0.0, -1.0, 1.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	*/
 
 	// load models
 	// -----------
@@ -123,7 +124,9 @@ void Game::onMouseMoved(double xPosition, double yPosition)
 	lastX = xPosition;
 	lastY = yPosition;
 
-	camera.ProcessMouseMovement(xOffset, yOffset);
+	if (!menu->isVisible()) {
+		camera.ProcessMouseMovement(xOffset, yOffset);
+	}
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
@@ -329,6 +332,7 @@ void Game::render() {
 
 void Game::prepareOutput() {
 	if (menu->isVisible()) {
+		glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
 		// Tell GLFW to release our mouse
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
@@ -346,7 +350,7 @@ void Game::prepareOutput() {
 		glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		shader->use();
+		/*shader->use();
 
 		// view/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
@@ -394,7 +398,7 @@ void Game::prepareOutput() {
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
-		glDepthFunc(GL_LESS); // set depth function back to default
+		glDepthFunc(GL_LESS); // set depth function back to default*/
 	}
 }
 
