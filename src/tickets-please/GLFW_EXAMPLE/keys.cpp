@@ -4,19 +4,20 @@ Keys::Keys(GLFWwindow *window, std::vector<int> keys)
 {
 	this->window = window;
 	this->interestedKeys = keys;
+
+	for (std::vector<int>::iterator iterator = interestedKeys.begin(); iterator != interestedKeys.end(); ++iterator) {
+		int key = *iterator;
+		bool pressed = glfwGetKey(window, key) == GLFW_PRESS;
+
+		std::cout << "Initial Key " << key << " Old Value " << pressedKeys[key] << " New Value " << pressed << std::endl;
+
+		pressedKeys.insert(std::pair<int, bool>(key, pressed));
+	}
 }
 
 bool Keys::wasPressed(int key)
 {
-	auto temp = pressedKeys.find(key);
-
-	if (temp != pressedKeys.end()) {
-		return temp->second;
-	}
-
-	else {
-		return false;
-	}
+	return pressedKeys.find(key)->second;
 }
 
 bool Keys::isPressed(int key)
@@ -26,20 +27,12 @@ bool Keys::isPressed(int key)
 
 bool Keys::isJustPressed(int key)
 {
-	return !this->wasPressed(key) && this->isPressed(key);
+	return this->wasReleased(key) && !this->wasPressed(key) && this->isPressed(key);
 }
 
 bool Keys::wasReleased(int key)
 {
-	auto temp = pressedKeys.find(key);
-
-	if (temp != pressedKeys.end()) {
-		return !temp->second;
-	}
-
-	else {
-		return false;
-	}
+	return !pressedKeys.find(key)->second;
 }
 
 bool Keys::isReleased(int key)
@@ -49,14 +42,14 @@ bool Keys::isReleased(int key)
 
 bool Keys::isJustReleased(int key)
 {
-	return !this->wasReleased(key) && this->isReleased(key);
+	return this->wasPressed(key) && !this->wasReleased(key) && this->isReleased(key);
 }
 
 void Keys::update()
 {
 	for (std::vector<int>::iterator iterator = interestedKeys.begin(); iterator != interestedKeys.end(); ++iterator) {
 		int key = *iterator;
-		bool pressed = glfwGetKey(window, key) == GLFW_PRESS;
+		bool pressed = (glfwGetKey(window, key) == GLFW_PRESS);
 
 		pressedKeys[key] = pressed;
 	}

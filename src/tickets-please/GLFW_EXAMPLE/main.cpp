@@ -154,7 +154,8 @@ int main()
 		GLFW_KEY_W,
 		GLFW_KEY_S,
 		GLFW_KEY_A,
-		GLFW_KEY_D
+		GLFW_KEY_D,
+		GLFW_KEY_E
 	});
 
 	Keys keys = Keys(window, interestingKeys);
@@ -232,6 +233,8 @@ int main()
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // set depth function back to default
 
+		keys.update();
+
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
@@ -256,11 +259,17 @@ void processInput(GLFWwindow*window, Keys keys)
 	}
 
 	if (keys.isJustPressed(GLFW_KEY_LEFT_CONTROL)) {
+		std::cout << "The ctrl key was JUST pressed" << std::endl;
 		camera.setCrouch(true);
 	}
 
 	if (keys.isJustReleased(GLFW_KEY_LEFT_CONTROL)) {
+		std::cout << "The ctrl key was JUST released" << std::endl;
 		camera.setCrouch(false);
+	}
+
+	if (keys.isJustPressed(GLFW_KEY_E)) {
+		std::cout << "The E key was JUST pressed" << std::endl;
 	}
 
 	int speed = 1;
@@ -284,8 +293,6 @@ void processInput(GLFWwindow*window, Keys keys)
 	if (keys.isPressed(GLFW_KEY_D)) {
 		camera.ProcessKeyboard(RIGHT, deltaTime * speed);
 	}
-
-	keys.update();
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
