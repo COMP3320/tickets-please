@@ -89,9 +89,9 @@
     <ClCompile Include="interactable.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="menu.cpp" />
-    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="mesh.cpp" />
     <ClCompile Include="model.cpp" />
-    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="shader.cpp" />
     <ClCompile Include="sound.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -129,12 +129,15 @@
     <None Include="..\objects\Map.mtl" />
     <None Include="..\objects\map2.mtl" />
     <None Include="..\objects\mapend.mtl" />
+    <None Include="cubemap.frag" />
+    <None Include="cubemap.vert" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
     <None Include="shader.frag" />
     <None Include="shader.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="boundbox.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="interactable.h" />

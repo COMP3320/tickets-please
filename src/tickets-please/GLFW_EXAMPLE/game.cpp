@@ -21,18 +21,18 @@ Game::Game(int width, int height) {
 // Actions 
 //
 
-int Game::run() {
+bool Game::setup() {
 	// Check that we initialised GLFW successfully (created a window)
-	/*if (!setupGLFW()) {
-		return -1;
+	if (!setupGLFW()) {
+		return false;
 	}
 
 	//Check that we initialised GLEW successfully (loaded all OpenGL function pointers)
 	if (!setupGLEW()) {
-		return -1;
-	}*/
+		return false;
+	}
 
-	/*setupCamera();
+	setupCamera();
 	setupMenu();
 	setupCubemap();
 	setupState();
@@ -42,19 +42,24 @@ int Game::run() {
 	// load models
 	// -----------
 
-	ourModel3 = Model("../objects/map2.obj");
-	ourModel4 = Model("../objects/map2.obj");
-	ourModel5 = Model("../objects/mapend.obj");
-	ourModel6 = Model("../objects/mapend.obj");
+	ourModel3 = new Model("../objects/map2.obj");
+	std::cout << "Loaded ourModel3" << std::endl;
+	ourModel4 = new Model("../objects/map2.obj");
+	std::cout << "Loaded ourModel4" << std::endl;
+	ourModel5 = new Model("../objects/mapend.obj");
+	std::cout << "Loaded ourModel5" << std::endl;
+	ourModel6 = new Model("../objects/mapend.obj");
+	std::cout << "Loaded ourModel6" << std::endl;
 
-	// Tell GLFW to capture our mouse
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	return true;
+}
 
+int Game::run() {
 	// Run the main game loop
-	loop();*/
+	loop();
 
 	// When the loop ends, cleanup any resources used
-	//cleanup();
+	cleanup();
 
 	// Return successfully
 	return 0;
@@ -67,7 +72,7 @@ int Game::run() {
 //
 
 GLFWwindow* Game::getWindow() {
-	return window;
+	return this->window;
 }
 
 // ------------------------------------
@@ -80,6 +85,11 @@ GLFWwindow* Game::getWindow() {
 // ---------------------------------------------------------------------------------------------
 void Game::onFrameBufferResize(int width, int height)
 {
+	std::cout << "onFrameBufferResize called" << std::endl << std::endl;
+
+	this->width = width;
+	this->height = height;
+
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
@@ -87,29 +97,33 @@ void Game::onFrameBufferResize(int width, int height)
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
-void Game::onMouseMoved(double xpos, double ypos)
+void Game::onMouseMoved(double xPosition, double yPosition)
 {
+	std::cout << "onMouseMoved called" << std::endl << std::endl;
+
 	if (firstMouse)
 	{
-		lastX = xpos;
-		lastY = ypos;
+		lastX = xPosition;
+		lastY = yPosition;
 		firstMouse = false;
 	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	float xOffset = xPosition - lastX;
+	float yOffset = lastY - yPosition; // reversed since y-coordinates go from bottom to top
 
-	lastX = xpos;
-	lastY = ypos;
+	lastX = xPosition;
+	lastY = yPosition;
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	camera.ProcessMouseMovement(xOffset, yOffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
-void Game::onMouseScrolled(double xoffset, double yoffset)
+void Game::onMouseScrolled(double xOffset, double yOffset)
 {
-	camera.ProcessMouseScroll(yoffset);
+	std::cout << "onMouseScrolled called" << std::endl << std::endl;
+
+	camera.ProcessMouseScroll(yOffset);
 }
 
 // ------------------------------------
@@ -196,6 +210,51 @@ void Game::setupState() {
 }
 
 void Game::setupSkybox() {
+	float skyboxVertices[] = {
+		// positions          
+		-1.0f,  1.0f, -1.0f,
+		-1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f, -1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+
+		-1.0f, -1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f,
+		-1.0f, -1.0f,  1.0f,
+
+		-1.0f,  1.0f, -1.0f,
+		1.0f,  1.0f, -1.0f,
+		1.0f,  1.0f,  1.0f,
+		1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f,  1.0f,
+		-1.0f,  1.0f, -1.0f,
+
+		-1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f, -1.0f,
+		1.0f, -1.0f, -1.0f,
+		-1.0f, -1.0f,  1.0f,
+		1.0f, -1.0f,  1.0f
+	};
+
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
 	glBindVertexArray(skyboxVAO);
@@ -209,15 +268,15 @@ void Game::setupShaders() {
 	// build and compile shaders
 	// don't forget to enable shader before setting uniforms
 	// -------------------------
-	/*shader = new Shader("shader.vert", "shader.frag");
+	shader = new Shader("shader.vert", "shader.frag");
 
-	shader.use();
-	shader.setInt("texture1", 0);
+	shader->use();
+	shader->setInt("texture1", 0);
 
 	skyboxShader = new Shader("cubemap.vert", "cubemap.frag");
 
-	skyboxShader.use();
-	skyboxShader.setInt("skybox", 0);*/
+	skyboxShader->use();
+	skyboxShader->setInt("skybox", 0);
 }
 
 void Game::updateTime() {
@@ -253,19 +312,25 @@ void Game::render() {
 
 void Game::prepareOutput() {
 	if (menu->isVisible()) {
+		// Tell GLFW to capture our mouse
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
 		glDisable(GL_DEPTH_TEST);
 
 		menu->render();
 	}
 
 	else {
+		// Tell GLFW to capture our mouse
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 		glEnable(GL_DEPTH_TEST);
 
 		glClearColor(0.0f, 0.0f, 1.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		/*shader->use();
-		
+		shader->use();
+
 		// view/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)width / (float)height, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
@@ -312,7 +377,7 @@ void Game::prepareOutput() {
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
-		glDepthFunc(GL_LESS); // set depth function back to default*/
+		glDepthFunc(GL_LESS); // set depth function back to default
 	}
 }
 

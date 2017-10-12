@@ -13,7 +13,6 @@
 #include <SOIL.h>
 
 #include "camera.h"
-#include "cubemapVert.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -29,6 +28,7 @@ public:
 	Game(int width = 800, int height = 600);
 
 	// Actions
+	bool setup();
 	int run();
 
 	// Getters
@@ -61,18 +61,17 @@ private:
 	// Skybox
 	unsigned int skyboxVAO;
 	unsigned int skyboxVBO;
-	GLvoid* skyboxVertices;
 	unsigned int cubemapTexture;
 
 	// Shaders
-	//Shader* shader;
-	//Shader* skyboxShader;
+	Shader* shader;
+	Shader* skyboxShader;
 
 	// Models
-	//Model* ourModel3;
-	//Model* ourModel4;
-	//Model* ourModel5;
-	//Model* ourModel6;
+	Model* ourModel3;
+	Model* ourModel4;
+	Model* ourModel5;
+	Model* ourModel6;
 
 	// Methods
 	bool setupGLFW();

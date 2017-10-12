@@ -13,7 +13,7 @@ void Menu::hide() {
 }
 
 void Menu::toggleVisibility() {
-	std::cout << "Toggled" << std::endl << std::endl;
+	std::cout << "Toggled menu" << std::endl << std::endl;
 	visible = !visible;
 }
 
@@ -22,5 +22,6 @@ bool Menu::isVisible() {
 }
 
 void Menu::render() {
-
+	glClearColor(0.5f, 0.5f, 0.5f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

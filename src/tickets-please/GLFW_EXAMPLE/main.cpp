@@ -7,25 +7,25 @@ const unsigned int SCR_HEIGHT = 600;
 // Game
 Game* game = NULL;
 
-int main()
-{
-	//game = new Game(SCR_WIDTH, SCR_HEIGHT);
-
-	return 0;
-
-	//glfwSetFramebufferSizeCallback(game->getWindow(), framebufferSizeCallback);
-	//glfwSetCursorPosCallback(game->getWindow(), mouseCallback);
-	//glfwSetScrollCallback(game->getWindow(), scrollCallback);
-
-	//return game->run();
-}
-
-// ------------------------------------
-
 // Callbacks
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double xPosition, double yPosition);
 void scrollCallback(GLFWwindow* window, double xOffset, double yOffset);
+
+// ------------------------------------
+
+int main()
+{
+	game = new Game(SCR_WIDTH, SCR_HEIGHT);
+
+	game->setup();
+	
+	glfwSetFramebufferSizeCallback(game->getWindow(), framebufferSizeCallback);
+	glfwSetCursorPosCallback(game->getWindow(), mouseCallback);
+	glfwSetScrollCallback(game->getWindow(), scrollCallback);
+
+	return game->run();
+}
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------

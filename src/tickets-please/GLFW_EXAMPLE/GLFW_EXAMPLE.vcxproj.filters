@@ -160,6 +160,12 @@
     <None Include="..\objects\mapend.mtl">
       <Filter>Resource Files\objects</Filter>
     </None>
+    <None Include="cubemap.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cubemap.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -184,6 +190,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sound.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boundbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
