@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <list>
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -30,7 +31,11 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 //TODO: Make nicer!
-bool i_press = false, g_press = false, m_press = false, antialiasing = false;
+bool i_press = false,
+	 g_press = false,
+	 m_press = false,
+	 f1_press = false,
+	 antialiasing = false;
 int MODE = 0;
 
 // camera
@@ -79,7 +84,6 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
 	glfwWindowHint(GLFW_SAMPLES, 4);
-	glEnable(GL_MULTISAMPLE);
 
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
@@ -183,15 +187,38 @@ int main()
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-	// generate texture
-	// Previous frame buffer
-	unsigned int prevFrameBuffer;
-	glGenTextures(1, &prevFrameBuffer);
-	glBindTexture(GL_TEXTURE_2D, prevFrameBuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, prevFrameBuffer, 0);
+	// Multisampling!
+	// 1. Configure multisample framebuffer
+	unsigned int framebuffer;
+	glGenTextures(1, &framebuffer);
+	glBindTexture(GL_FRAMEBUFFER, framebuffer);
+
+	// 2. Create multisampled colour attachment tex
+	int MS_SIZE = 8;
+	unsigned int texColBuffMS;
+	glGenTextures(1, &texColBuffMS);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texColBuffMS);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, MS_SIZE, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texColBuffMS, 0);
+
+	// 3. Create render buffer for depth & stencil
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, MS_SIZE, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "ERROR: Framebuffer is not complete!" << std::endl;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// 4. Create intermediate framebuffer
+	unsigned int intermediateFBO;
+	glGenFramebuffers(1, &intermediateFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, intermediateFBO);
 
 	// Current frame buffer
 	unsigned int texColorBuffer;
@@ -201,44 +228,12 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
-
-	unsigned int rboMotionBlur;
-	glGenRenderbuffers(1, &rboMotionBlur);
-	//glBindRenderbuffer(GL_RENDERBUFFER, rboMotionBlur);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 5, GL_RGB8, SCR_WIDTH, SCR_HEIGHT);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboMotionBlur);
-
-	// Create render buffer object
-	unsigned int rbo;
-	glGenRenderbuffers(1, &rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
-
-	// Create render and frame buffers for antialiasing
-	/*
-	int msaa = 4;
-	unsigned int rboColourId;
-	glGenRenderbuffers(1, &rboColourId);
-	glBindRenderbuffer(GL_RENDERBUFFER, rboColourId);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaa, GL_RGB8, SCR_WIDTH, SCR_HEIGHT);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColourId);
-
-	GLuint rboDepthId;
-	glGenRenderbuffers(1, &rboDepthId);
-	glBindRenderbuffer(GL_RENDERBUFFER, rboDepthId);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaa, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColourId);
-
-	GLuint fboMsaaId;
-	glGenFramebuffers(1, &fboMsaaId);
-	glBindFramebuffer(GL_FRAMEBUFFER, fboMsaaId);
-	*/
+	glm::mat4 prevView;
+	int frameCount = 0;
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		// render loop
 		// -----------
-		int i = 0, numFrames = 5, timestep = 0.1;
 		while (!glfwWindowShouldClose(window))
 		{
 			// per-frame time logic
@@ -253,11 +248,14 @@ int main()
 
 			// render
 			// ------
-			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 			
-			glEnable(GL_DEPTH_TEST);
 			glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glEnable(GL_DEPTH_TEST);
 
 			ourShader.use();
 			// view/projection transformations
@@ -307,32 +305,34 @@ int main()
 			glBindVertexArray(0);
 			glDepthFunc(GL_LESS); // set depth function back to default
 
+			// draw
+			// ------
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFBO);
+			glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
 			// Now back to default framebuffer and draw our quad
-			if (MODE == 3) {
-				glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
-				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-				glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-			}
-			else {
-				glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			}
-			glDisable(GL_DEPTH_TEST);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
+			glDisable(GL_DEPTH_TEST);
 
 			screenShader.use();
 			glUniform1i(modeLoc, MODE);
+			screenShader.setMat4("view", view);
+			screenShader.setMat4("proj", projection);
 			glBindVertexArray(quadVAO);
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+			frameCount++;
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
+			prevView = view;
+
 			glfwSwapBuffers(window);
-			/*
-			i++;
-			if (i >= numFrames) {
-				i = 0;*/
-				glBindTexture(GL_TEXTURE_2D, prevFrameBuffer);
-			//}
+			if (frameCount % 5 == 0) {
+				glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+			}
 			glfwPollEvents();
 		}
 	}
@@ -376,6 +376,19 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) { m_press = true; }
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE && m_press) {
 		MODE = (MODE == 3 ? 0 : 3);
+		m_press = false;
+	}
+	// Toggle motion blur
+	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) { f1_press = true; }
+	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_RELEASE && f1_press) {
+		if (MODE == 3) {
+			MODE = 0;
+			glEnable(GL_MULTISAMPLE);
+		}
+		else {
+			MODE = 3;
+			glDisable(GL_MULTISAMPLE);
+		}
 		m_press = false;
 	}
 
