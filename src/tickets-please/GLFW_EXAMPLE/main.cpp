@@ -29,6 +29,9 @@ void processInput(GLFWwindow *window);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
+//TODO: Make nicer!
+bool i_press = false, g_press = false, m_press = false, antialiasing = false;
+int MODE = 0;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, -4.0f));
@@ -74,6 +77,9 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glEnable(GL_MULTISAMPLE);
 
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
@@ -128,7 +134,9 @@ int main()
 	// -------------------------
 	Shader ourShader("shader.vert", "shader.frag");
 	Shader skyboxShader("cubemap.vert", "cubemap.frag");
+	Shader screenShader("motionBlur.vert", "motionBlur.frag");
 
+	// Process skybox VAO/VBO
 	unsigned int skyboxVAO, skyboxVBO;
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
@@ -137,6 +145,18 @@ int main()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	// Process quad VAO/VBO
+	unsigned int quadVAO, quadVBO;
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
 	// load models
 	// -----------
@@ -149,84 +169,176 @@ int main()
 	// don't forget to enable shader before setting uniforms
 	ourShader.use();
 	skyboxShader.use();
+	screenShader.use();
 	ourShader.setInt("texture1", 0);
 	skyboxShader.setInt("skybox", 0);
+	screenShader.setInt("screenTexture", 0);
+	
+	// Allow access of mode of filtering
+	GLint modeLoc = glGetUniformLocation(screenShader.ID, "mode");
+	std::cout << "Mode location: " << modeLoc << std::endl;
 
-	// render loop
-	// -----------
-	while (!glfwWindowShouldClose(window))
-	{
-		// per-frame time logic
-		// --------------------
-		float currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+	// Configure frame buffer
+	unsigned int fbo;
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-		// input
-		// -----
-		processInput(window);
+	// generate texture
+	// Previous frame buffer
+	unsigned int prevFrameBuffer;
+	glGenTextures(1, &prevFrameBuffer);
+	glBindTexture(GL_TEXTURE_2D, prevFrameBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, prevFrameBuffer, 0);
 
-		// render
-		// ------
-		glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Current frame buffer
+	unsigned int texColorBuffer;
+	glGenTextures(1, &texColorBuffer);
+	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
 
-		ourShader.use();
-		// view/projection transformations
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-		ourShader.setMat4("projection", projection);
-		ourShader.setMat4("view", view);
+	unsigned int rboMotionBlur;
+	glGenRenderbuffers(1, &rboMotionBlur);
+	//glBindRenderbuffer(GL_RENDERBUFFER, rboMotionBlur);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 5, GL_RGB8, SCR_WIDTH, SCR_HEIGHT);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboMotionBlur);
 
-		glm::mat4 model3;
-	//	model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 0.0f, 0.0f));
-		model3 = glm::translate(model3, glm::vec3(-0.75f, -1.5f, 0.0f)); // translate it down so it's at the center of the scene
-		model3 = glm::scale(model3, glm::vec3(0.65f, 0.50f, 0.50f));	// it's a bit too big for our scene, so scale it down
+	// Create render buffer object
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
 
-		ourShader.setMat4("model", model3);
-		ourModel3.Draw(ourShader);
-		
-		glm::mat4 model4;
-		model4 = glm::translate(model4, glm::vec3(-0.75f, -1.5f, -5.38f)); // translate it down so it's at the center of the scene
-		model4 = glm::scale(model4, glm::vec3(0.65f, 0.50f, 0.50f));
-		ourShader.setMat4("model", model4);
-		ourModel4.Draw(ourShader);
+	// Create render and frame buffers for antialiasing
+	/*
+	int msaa = 4;
+	unsigned int rboColourId;
+	glGenRenderbuffers(1, &rboColourId);
+	glBindRenderbuffer(GL_RENDERBUFFER, rboColourId);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaa, GL_RGB8, SCR_WIDTH, SCR_HEIGHT);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColourId);
 
-		glm::mat4 model5;
-		model5 = glm::translate(model5, glm::vec3(0.05f, -1.5f, -9.38f)); // translate it down so it's at the center of the scene
-		model5 = glm::scale(model5, glm::vec3(0.65f, 0.50f, 0.50f));
-		ourShader.setMat4("model", model5);
-		ourModel5.Draw(ourShader);
+	GLuint rboDepthId;
+	glGenRenderbuffers(1, &rboDepthId);
+	glBindRenderbuffer(GL_RENDERBUFFER, rboDepthId);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaa, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rboColourId);
 
-		glm::mat4 model6;
-		model6 = glm::rotate(model6, 3.15f, glm::vec3(0.0f, 1.0f, 0.0f));
-		model6 = glm::translate(model6, glm::vec3(0.05f, -1.5f, -2.0f)); // translate it down so it's at the center of the scene
-		model6 = glm::scale(model6, glm::vec3(0.65f, 0.50f, 0.50f));
-		ourShader.setMat4("model", model6);
-		ourModel6.Draw(ourShader);
+	GLuint fboMsaaId;
+	glGenFramebuffers(1, &fboMsaaId);
+	glBindFramebuffer(GL_FRAMEBUFFER, fboMsaaId);
+	*/
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// render loop
+		// -----------
+		int i = 0, numFrames = 5, timestep = 0.1;
+		while (!glfwWindowShouldClose(window))
+		{
+			// per-frame time logic
+			// --------------------
+			float currentFrame = glfwGetTime();
+			deltaTime = currentFrame - lastFrame;
+			lastFrame = currentFrame;
 
-		// draw skybox as last
-		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
-		skyboxShader.use();
-		view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
-		skyboxShader.setMat4("view", view);
-		skyboxShader.setMat4("projection", projection);
-		// skybox cube
-		glBindVertexArray(skyboxVAO);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-		glDepthFunc(GL_LESS); // set depth function back to default
+			// input
+			// -----
+			processInput(window);
 
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		// -------------------------------------------------------------------------------
-		glfwSwapBuffers(window);
-		glfwPollEvents();
+			// render
+			// ------
+			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			
+			glEnable(GL_DEPTH_TEST);
+			glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			ourShader.use();
+			// view/projection transformations
+			glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+			glm::mat4 view = camera.GetViewMatrix();
+			ourShader.setMat4("projection", projection);
+			ourShader.setMat4("view", view);
+
+			glm::mat4 model3;
+			//	model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 0.0f, 0.0f));
+			model3 = glm::translate(model3, glm::vec3(-0.75f, -1.5f, 0.0f)); // translate it down so it's at the center of the scene
+			model3 = glm::scale(model3, glm::vec3(0.65f, 0.50f, 0.50f));	// it's a bit too big for our scene, so scale it down
+
+			ourShader.setMat4("model", model3);
+			ourModel3.Draw(ourShader);
+
+			glm::mat4 model4;
+			model4 = glm::translate(model4, glm::vec3(-0.75f, -1.5f, -5.38f)); // translate it down so it's at the center of the scene
+			model4 = glm::scale(model4, glm::vec3(0.65f, 0.50f, 0.50f));
+			ourShader.setMat4("model", model4);
+			ourModel4.Draw(ourShader);
+
+			glm::mat4 model5;
+			model5 = glm::translate(model5, glm::vec3(0.05f, -1.5f, -9.38f)); // translate it down so it's at the center of the scene
+			model5 = glm::scale(model5, glm::vec3(0.65f, 0.50f, 0.50f));
+			ourShader.setMat4("model", model5);
+			ourModel5.Draw(ourShader);
+
+			glm::mat4 model6;
+			model6 = glm::rotate(model6, 3.15f, glm::vec3(0.0f, 1.0f, 0.0f));
+			model6 = glm::translate(model6, glm::vec3(0.05f, -1.5f, -2.0f)); // translate it down so it's at the center of the scene
+			model6 = glm::scale(model6, glm::vec3(0.65f, 0.50f, 0.50f));
+			ourShader.setMat4("model", model6);
+			ourModel6.Draw(ourShader);
+
+			// draw skybox as last
+			glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+			skyboxShader.use();
+			view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
+			skyboxShader.setMat4("view", view);
+			skyboxShader.setMat4("projection", projection);
+			// skybox cube
+			glBindVertexArray(skyboxVAO);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+			glBindVertexArray(0);
+			glDepthFunc(GL_LESS); // set depth function back to default
+
+			// Now back to default framebuffer and draw our quad
+			if (MODE == 3) {
+				glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+				glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+			}
+			else {
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			}
+			glDisable(GL_DEPTH_TEST);
+			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			screenShader.use();
+			glUniform1i(modeLoc, MODE);
+			glBindVertexArray(quadVAO);
+			glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			glfwSwapBuffers(window);
+			/*
+			i++;
+			if (i >= numFrames) {
+				i = 0;*/
+				glBindTexture(GL_TEXTURE_2D, prevFrameBuffer);
+			//}
+			glfwPollEvents();
+		}
 	}
-
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
+	glDeleteFramebuffers(1, &fbo);
 	glDeleteVertexArrays(1, &skyboxVAO);
 	glDeleteBuffers(1, &skyboxVAO);
 
@@ -248,9 +360,27 @@ void processInput(GLFWwindow *window)
 		camera.setCrouch(true);
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
 		camera.setCrouch(false);
+	// Toggle inversion
+	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) { i_press = true; }
+	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE && i_press) {
+		MODE = (MODE == 1 ? 0 : 1);
+		i_press = false;
+	}
+	// Toggle grayscale
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) { g_press = true; }
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE && g_press) {
+		MODE = (MODE == 2 ? 0 : 2);
+		g_press = false;
+	}
+	// Toggle motion blur
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) { m_press = true; }
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE && m_press) {
+		MODE = (MODE == 3 ? 0 : 3);
+		m_press = false;
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(FORWARD, deltaTime * speed);
-
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		camera.ProcessKeyboard(BACKWARD, deltaTime * speed);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
