@@ -9,8 +9,6 @@ Keys::Keys(GLFWwindow *window, std::vector<int> keys)
 		int key = *iterator;
 		bool pressed = glfwGetKey(window, key) == GLFW_PRESS;
 
-		std::cout << "Initial Key " << key << " Old Value " << pressedKeys[key] << " New Value " << pressed << std::endl;
-
 		pressedKeys.insert(std::pair<int, bool>(key, pressed));
 	}
 }
