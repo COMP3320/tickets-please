@@ -301,3 +301,6 @@ __pycache__/
 
 # OpenCover UI analysis results
 OpenCover/
+
+src/tickets-please/GLFW_EXAMPLE/soil/projects/VC9/Debug
+src/tickets-please/GLFW_EXAMPLE/soil/projects/VC9/Release
