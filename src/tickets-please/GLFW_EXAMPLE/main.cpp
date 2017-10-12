@@ -13,6 +13,7 @@
 #include "model.h"
 #include "cubemapVert.h"
 //#include "sound.h"
+#include "keys.h"
 
 #include <stdio.h>  
 #include <stdlib.h> 
@@ -24,7 +25,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window);
+void processInput(GLFWwindow *window, Keys keys);
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -146,6 +147,18 @@ int main()
 	Model ourModel5("../objects/mapend.obj");
 	Model ourModel6("../objects/mapend.obj");
 
+	std::vector<int> interestingKeys = std::vector<int>({
+		GLFW_KEY_ESCAPE,
+		GLFW_KEY_LEFT_CONTROL,
+		GLFW_KEY_LEFT_SHIFT,
+		GLFW_KEY_W,
+		GLFW_KEY_S,
+		GLFW_KEY_A,
+		GLFW_KEY_D
+	});
+
+	Keys keys = Keys(window, interestingKeys);
+
 	// don't forget to enable shader before setting uniforms
 	ourShader.use();
 	skyboxShader.use();
@@ -164,7 +177,7 @@ int main()
 
 		// input
 		// -----
-		processInput(window);
+		processInput(window, keys);
 
 		// render
 		// ------
@@ -179,13 +192,13 @@ int main()
 		ourShader.setMat4("view", view);
 
 		glm::mat4 model3;
-	//	model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 0.0f, 0.0f));
+		//	model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 		model3 = glm::translate(model3, glm::vec3(-0.75f, -1.5f, 0.0f)); // translate it down so it's at the center of the scene
 		model3 = glm::scale(model3, glm::vec3(0.65f, 0.50f, 0.50f));	// it's a bit too big for our scene, so scale it down
 
 		ourShader.setMat4("model", model3);
 		ourModel3.Draw(ourShader);
-		
+
 		glm::mat4 model4;
 		model4 = glm::translate(model4, glm::vec3(-0.75f, -1.5f, -5.38f)); // translate it down so it's at the center of the scene
 		model4 = glm::scale(model4, glm::vec3(0.65f, 0.50f, 0.50f));
@@ -236,27 +249,43 @@ int main()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
+void processInput(GLFWwindow*window, Keys keys)
 {
-	int speed = 1;
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	if (keys.isPressed(GLFW_KEY_ESCAPE)) {
 		glfwSetWindowShouldClose(window, true);
+	}
 
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		speed = 2;
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+	if (keys.isJustPressed(GLFW_KEY_LEFT_CONTROL)) {
 		camera.setCrouch(true);
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
-		camera.setCrouch(false);
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime * speed);
+	}
 
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	if (keys.isJustReleased(GLFW_KEY_LEFT_CONTROL)) {
+		camera.setCrouch(false);
+	}
+
+	int speed = 1;
+
+	if (keys.isPressed(GLFW_KEY_LEFT_SHIFT)) {
+		speed = 2;
+	}
+
+	if (keys.isPressed(GLFW_KEY_W)) {
+		camera.ProcessKeyboard(FORWARD, deltaTime * speed);
+	}
+
+	if (keys.isPressed(GLFW_KEY_S)) {
 		camera.ProcessKeyboard(BACKWARD, deltaTime * speed);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	}
+
+	if (keys.isPressed(GLFW_KEY_A)) {
 		camera.ProcessKeyboard(LEFT, deltaTime * speed);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	}
+
+	if (keys.isPressed(GLFW_KEY_D)) {
 		camera.ProcessKeyboard(RIGHT, deltaTime * speed);
+	}
+
+	keys.update();
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
