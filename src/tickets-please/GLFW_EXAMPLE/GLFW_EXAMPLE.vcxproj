@@ -128,6 +128,8 @@
     <None Include="..\objects\Train.mtl" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
+    <None Include="selection.frag" />
+    <None Include="selection.vert" />
     <None Include="shader.frag" />
     <None Include="shader.vert" />
   </ItemGroup>
@@ -137,6 +139,7 @@
     <ClInclude Include="interactable.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="pickRay.h" />
     <ClInclude Include="shader.h" />
   </ItemGroup>
   <ItemGroup>

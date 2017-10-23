@@ -43,7 +43,7 @@ public:
 	float MovementSpeed;
 	float MouseSensitivity;
 	float Zoom;
-		
+	int test = 0;
 	bool isCrouched;
 
 	// Constructor with vectors
@@ -82,7 +82,7 @@ public:
 		pos3 = Position - Right * velocity;
 		pos4 = Position + Right * velocity;
 		bool boundCheck = boundaryCheck(direction, areaMap, bb, arrLength, pos1, pos2, pos3, pos4);
-		std::cout << "Curr position x " << Position.x << "Curr position y " << Position.y << "Curr position z " << Position.z << std::endl;
+//		std::cout << "Curr position x " << Position.x << "Curr position y " << Position.y << "Curr position z " << Position.z << std::endl;
 //		std::cout << "Max x " << bb[1].getMax().x << "Min x " << bb[1].getMin().x << "Max y " << bb[1].getMax().y << "Min y " << bb[1].getMin().y << "Max z " << bb[1].getMax().z << "Min z " << bb[1].getMin().z << std::endl;
 		if (direction == FORWARD && boundCheck)
 		{
@@ -100,7 +100,6 @@ public:
 		{
 			Position = pos4;
 		}
-					
 	}
 
 	bool boundaryCheck(Camera_Movement direction, BoundBox areaMap, BoundBox bb[], int arrLength, glm::vec3 pos1, glm::vec3 pos2, glm::vec3 pos3, glm::vec3 pos4)

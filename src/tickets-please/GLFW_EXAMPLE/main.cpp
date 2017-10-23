@@ -13,6 +13,7 @@
 #include "model.h"
 #include "cubemapVert.h"
 #include "boundbox.h"
+#include "pickRay.h"
 
 #include <stdio.h>  
 #include <stdlib.h> 
@@ -25,7 +26,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLength);
-
+void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
+void renderSelection(void);
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -35,10 +37,12 @@ Camera camera(glm::vec3(0.0f, 0.0f, -4.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
-
+float currX, currY;
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+Shader selection;
 
 unsigned int loadCubemap(std::vector<std::string> faces) {
 	unsigned int textureID;
@@ -92,6 +96,7 @@ int main()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	// tell GLFW to capture our mouse
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -122,12 +127,15 @@ int main()
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_REPLACE);
+
 //	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// build and compile shaders
 	// -------------------------
+	
 	Shader ourShader("shader.vert", "shader.frag");
 	Shader skyboxShader("cubemap.vert", "cubemap.frag");
+	selection.init("selection.vert", "selection.frag");
 
 	unsigned int skyboxVAO, skyboxVBO;
 	glGenVertexArrays(1, &skyboxVAO);
@@ -163,6 +171,8 @@ int main()
 	ourShader.setInt("texture1", 0);
 	skyboxShader.setInt("skybox", 0);
 
+	unsigned char res[4] = {0,0,0,0};
+	GLint viewport[4];
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -179,28 +189,24 @@ int main()
 
 		// render
 		// ------
-		glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		ourShader.use();
-		// view/projection transformations
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
-		ourShader.setMat4("projection", projection);
-		ourShader.setMat4("view", view);
+		selection.setMat4("projection", projection);
+		selection.setMat4("view", view);
 
-		glm::mat4 model;
-		model = glm::translate(model, glm::vec3(0.0f, -1.0f, -4.5f));
-	//	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-		ourShader.setMat4("model", model);
-		ourModel.Draw(ourShader);
-
+		selection.use();
 		glm::mat4 model2;
 		model2 = glm::rotate(model2, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
 		model2 = glm::translate(model2, glm::vec3(7.0f, -3.0f, 4.5f));
-		ourShader.setMat4("model", model2);
-		chairSet1.Draw(ourShader);
+		selection.setInt("code", 100);
+		selection.setMat4("model", model2);
+		chairSet1.Draw(selection);
 
+		glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
+/*
 		glm::mat4 model3;
 		model3 = glm::rotate(model3, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
 		model3 = glm::translate(model3, glm::vec3(-2.0f, -3.0f, 4.0f));
@@ -225,9 +231,9 @@ int main()
 		model6 = glm::rotate(model6, 1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
 		ourShader.setMat4("model", model6);
 		person.Draw(ourShader);
-
+*/
 		// draw skybox as last
-		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+/*		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 		skyboxShader.use();
 		view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
 		skyboxShader.setMat4("view", view);
@@ -239,9 +245,14 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // set depth function back to default
-
+*/
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
+		glGetIntegerv(GL_VIEWPORT, viewport);
+		glReadPixels(currX, viewport[3] - currY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
+
+		std::cout << (int)res[0] << std::endl;
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -280,6 +291,44 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 		camera.ProcessKeyboard(RIGHT, deltaTime * speed, areaMap, bb, arrLength);
 }
 
+void mouse_button_callback(GLFWwindow * window, int button, int action, int mods)
+{
+	unsigned char res[4];
+	GLint viewport[4];
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+	{
+		renderSelection();
+		glGetIntegerv(GL_VIEWPORT, viewport);
+		glReadPixels(currX, viewport[3] - currY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
+
+		std::cout << (int)res[0] << std::endl;
+	}
+		
+}
+
+void renderSelection(void)
+{
+	Model chairSet1("../objects/chairTest.obj");
+	
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 view = camera.GetViewMatrix();
+	selection.setMat4("projection", projection);
+	selection.setMat4("view", view);
+
+	selection.use();
+	glm::mat4 model2;
+	model2 = glm::rotate(model2, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
+	model2 = glm::translate(model2, glm::vec3(7.0f, -3.0f, 4.5f));
+	selection.setInt("code", 100);
+	selection.setMat4("model", model2);
+	chairSet1.Draw(selection);
+
+	glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
+}
+
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -293,6 +342,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
+	currX = xpos;
+	currY = ypos;
 	if (firstMouse)
 	{
 		lastX = xpos;

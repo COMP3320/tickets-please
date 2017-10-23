@@ -151,6 +151,12 @@
     <None Include="..\objects\MapDemo2.mtl">
       <Filter>Resource Files\objects</Filter>
     </None>
+    <None Include="selection.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="selection.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -169,6 +175,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="boundbox.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pickRay.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
