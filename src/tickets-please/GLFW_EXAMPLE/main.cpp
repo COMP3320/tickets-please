@@ -272,6 +272,8 @@ int main()
 			glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+			glDisable(GL_BLEND);
+
 			ourShader.use();
 
 			// set the lighting mode
@@ -315,6 +317,8 @@ int main()
 
 			glm::vec4 light_colour(1.0f, 1.0f, 1.0f, 1.0f);
 			ourShader.setVec4("light_colour", light_colour);
+
+			glEnable(GL_BLEND);
 
 			// draw skybox as last
 			glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content

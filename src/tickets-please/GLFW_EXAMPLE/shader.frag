@@ -38,7 +38,7 @@ void main()
 	vec4 specular = pow(specular_intensity, shininess) * light_colour;
 	
 	//Ambient
-	vec4 ambient = vec4(1.0,1.0,1.0,0.5);
+	vec4 ambient = vec4(1.0,1.0,1.0,1.0);
     
 	switch(light_mode){
 		case 0:
@@ -59,6 +59,7 @@ void main()
 			break;
 		case 5:
 			outColor = texture(tex, Texcoord);
+			break;
 	}
 }
 
