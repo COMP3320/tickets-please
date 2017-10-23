@@ -28,6 +28,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window, Keys keys);
 
+enum Post_Mode { POST_NORM, POST_INVR, POST_GRAY };
+enum Light_Mode { LIGHT_NORM, LIGHT_DIFF, LIGHT_SPEC, LIGHT_DFSP, LIGHT_DIST, LIGHT_TEXT };
+
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -37,7 +40,8 @@ bool i_press = false,
 	 m_press = false,
 	 f1_press = false,
 	 antialiasing = false;
-int MODE = 0;
+Post_Mode post_mode = POST_NORM;
+Light_Mode light_mode = LIGHT_NORM;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, -4.0f));
@@ -131,7 +135,6 @@ int main()
 
 	// configure global opengl state
 	// -----------------------------
-	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -161,15 +164,7 @@ int main()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
-	// load models
-	// -----------
-
-	Model ourModel3("../objects/map2.obj");
-	Model ourModel4("../objects/map2.obj");
-	Model ourModel5("../objects/mapend.obj");
-	Model ourModel6("../objects/mapend.obj");
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));	
 
 	std::vector<int> interestingKeys = std::vector<int>({
 		GLFW_KEY_ESCAPE,
@@ -183,22 +178,28 @@ int main()
 		GLFW_KEY_I,
 		GLFW_KEY_M,
 		GLFW_KEY_G,
-		GLFW_KEY_F1
+		GLFW_KEY_F1,
+		GLFW_KEY_F2,
+		GLFW_KEY_F3,
+		GLFW_KEY_F4,
+		GLFW_KEY_F5,
+
 	});
 
 	Keys keys = Keys(window, interestingKeys);
 
 	// don't forget to enable shader before setting uniforms
 	ourShader.use();
+	Model ourModel3("../objects/map2.obj");
+	Model ourModel4 = ourModel3;
+	Model ourModel5("../objects/mapend.obj");
+	Model ourModel6 = ourModel5;
+	GLint light_mode_location = glGetUniformLocation(ourShader.ID, "light_mode");
+
 	skyboxShader.use();
+
 	screenShader.use();
-	ourShader.setInt("texture1", 0);
-	skyboxShader.setInt("skybox", 0);
-	screenShader.setInt("screenTexture", 0);
-	
-	// Allow access of mode of filtering
-	GLint modeLoc = glGetUniformLocation(screenShader.ID, "mode");
-	std::cout << "Mode location: " << modeLoc << std::endl;
+	GLint post_mode_location = glGetUniformLocation(screenShader.ID, "mode");
 
 	// Configure frame buffer
 	unsigned int fbo;
@@ -252,6 +253,7 @@ int main()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		// render loop
 		// -----------
+		glEnable(GL_DEPTH_TEST);
 		while (!glfwWindowShouldClose(window))
 		{
 			// per-frame time logic
@@ -266,27 +268,25 @@ int main()
 
 			// render
 			// ------
-			
-			glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 			glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glEnable(GL_DEPTH_TEST);
 
 			ourShader.use();
+
+			// set the lighting mode
+			glUniform1i(light_mode_location, light_mode);
+
 			// view/projection transformations
 			glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 			glm::mat4 view = camera.GetViewMatrix();
-			ourShader.setMat4("projection", projection);
+			ourShader.setMat4("proj", projection);
 			ourShader.setMat4("view", view);
 
 			glm::mat4 model3;
 			//	model3 = glm::rotate(model3, 1.5f, glm::vec3(0.0f, 0.0f, 0.0f));
 			model3 = glm::translate(model3, glm::vec3(-0.75f, -1.5f, 0.0f)); // translate it down so it's at the center of the scene
 			model3 = glm::scale(model3, glm::vec3(0.65f, 0.50f, 0.50f));	// it's a bit too big for our scene, so scale it down
-
 			ourShader.setMat4("model", model3);
 			ourModel3.Draw(ourShader);
 
@@ -308,6 +308,13 @@ int main()
 			model6 = glm::scale(model6, glm::vec3(0.65f, 0.50f, 0.50f));
 			ourShader.setMat4("model", model6);
 			ourModel6.Draw(ourShader);
+
+			// create light position
+			glm::vec4 light_position = model3 *  glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+			ourShader.setVec4("light_position", light_position);
+
+			glm::vec4 light_colour(1.0f, 1.0f, 1.0f, 1.0f);
+			ourShader.setVec4("light_colour", light_colour);
 
 			// draw skybox as last
 			glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -336,7 +343,7 @@ int main()
 			glDisable(GL_DEPTH_TEST);
 
 			screenShader.use();
-			glUniform1i(modeLoc, MODE);
+			glUniform1i(post_mode_location, post_mode);
 			screenShader.setMat4("view", view);
 			screenShader.setMat4("proj", projection);
 			glBindVertexArray(quadVAO);
@@ -345,12 +352,11 @@ int main()
 			frameCount++;
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
+			glEnable(GL_DEPTH_TEST);
+
 			prevView = view;
 			keys.update();
 			glfwSwapBuffers(window);
-			if (frameCount % 5 == 0) {
-				glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-			}
 			glfwPollEvents();
 		}
 	}
@@ -373,48 +379,58 @@ void processInput(GLFWwindow*window, Keys keys)
 	}
 
 	if (keys.isJustPressed(GLFW_KEY_LEFT_CONTROL)) {
-		std::cout << "The ctrl key was JUST pressed" << std::endl;
 		camera.setCrouch(true);
 	}
 
 	if (keys.isJustReleased(GLFW_KEY_LEFT_CONTROL)) {
-		std::cout << "The ctrl key was JUST released" << std::endl;
 		camera.setCrouch(false);
 	}
 
+	// Post processing mode selection
 	// Toggle inversion
 	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) { i_press = true; }
 	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE && i_press) {
-		MODE = (MODE == 1 ? 0 : 1);
+		post_mode = (post_mode == POST_INVR ? POST_NORM : POST_INVR);
 		i_press = false;
 	}
 	// Toggle grayscale
 	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) { g_press = true; }
 	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE && g_press) {
-		MODE = (MODE == 2 ? 0 : 2);
+		post_mode = (post_mode == POST_GRAY ? POST_NORM : POST_GRAY);
 		g_press = false;
 	}
-	// Toggle motion blur
+	// Toggle motion blur - TODO: Reimplement when working
+	/*
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS) { m_press = true; }
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE && m_press) {
-		MODE = (MODE == 3 ? 0 : 3);
+		post_mode = (post_mode == 3 ? 0 : 3);
 		m_press = false;
 	}
-	// Toggle motion blur
-	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS) { f1_press = true; }
-	if (glfwGetKey(window, GLFW_KEY_F1) == GLFW_RELEASE && f1_press) {
-		if (MODE == 3) {
-			MODE = 0;
-			glEnable(GL_MULTISAMPLE);
-		}
-		else {
-			MODE = 3;
-		}
-		m_press = false;
-	}
+	*/
 
 	if (keys.isJustPressed(GLFW_KEY_E)) {
 		std::cout << "The E key was JUST pressed" << std::endl;
+	}
+
+	// Lighting mode selection
+	if (keys.isJustPressed(GLFW_KEY_F1)) {
+		light_mode = (light_mode == LIGHT_DIFF ? LIGHT_NORM : LIGHT_DIFF);
+	}
+
+	if (keys.isJustPressed(GLFW_KEY_F2)) {
+		light_mode = (light_mode == LIGHT_SPEC ? LIGHT_NORM : LIGHT_SPEC);
+	}
+
+	if (keys.isJustPressed(GLFW_KEY_F3)) {
+		light_mode = (light_mode == LIGHT_DFSP ? LIGHT_NORM : LIGHT_DFSP);
+	}
+
+	if (keys.isJustPressed(GLFW_KEY_F4)) {
+		light_mode = (light_mode == LIGHT_DIST ? LIGHT_NORM : LIGHT_DIST);
+	}
+
+	if (keys.isJustPressed(GLFW_KEY_F5)) {
+		light_mode = (light_mode == LIGHT_TEXT ? LIGHT_NORM : LIGHT_TEXT);
 	}
 
 	int speed = 1;

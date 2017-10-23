@@ -1,22 +1,23 @@
+#version 150
 
-
-#version 330 core
-out vec4 FragColor;
-
-in vec2 TexCoords;
 in vec3 Colour;
+in vec2 Texcoord;
 
+//frag position and normals in view space
 in vec4 fragNormalView;
 in vec4 fragPositionView;
+
+out vec4 outColor;
 
 uniform sampler2D tex;
 uniform vec4 light_position;
 uniform vec4 light_colour;
 
+uniform int light_mode;
+
 void main()
-{    
-    FragColor = texture(tex, TexCoords);
-  //Compute direction of light from frag position in view space
+{	
+	//Compute direction of light from frag position in view space
 	vec3 lightDisplacement = light_position.xyz - fragPositionView.xyz;
 	
 	//Distance to light
@@ -33,13 +34,31 @@ void main()
 	
 	//Specular component.
 	float shininess = 100;
-	float specular_intensity = clamp(dot(reflection, -normalize(fragPositionView.xyz)),0,1);
+	float specular_intensity = clamp(dot(reflection, -normalize(fragPositionView.xyz)), 0, 1);
 	vec4 specular = pow(specular_intensity, shininess) * light_colour;
 	
 	//Ambient
-	vec4 ambient = vec4(0.3,0.3,0.3,0.01);
+	vec4 ambient = vec4(1.0,1.0,1.0,0.5);
     
-    //Final total colour including diffuse, specular, ambient, falloff (with 1/d^2), texture and colour
-	//FragColor =  ((diffuse + specular) * (1/(d*d)) + ambient) * texture(tex, TexCoords) * vec4(Colour, 1.0);
+	switch(light_mode){
+		case 0:
+			//Final total colour including diffuse, specular, ambient, falloff (with 1/d^2), texture and colour
+			outColor =  ((diffuse + specular) * (1/(d*d)) + ambient) * texture(tex, Texcoord) * vec4(Colour, 1.0);
+			break;
+		case 1:
+			outColor = diffuse;
+			break;
+		case 2:
+			outColor = specular;
+			break;
+		case 3:
+			outColor = specular + diffuse;
+			break;
+		case 4:
+			outColor = (diffuse + specular) * (1/(d*d));
+			break;
+		case 5:
+			outColor = texture(tex, Texcoord);
+	}
 }
 
