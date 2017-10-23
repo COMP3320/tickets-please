@@ -76,6 +76,7 @@ public:
 	void ProcessKeyboard(Camera_Movement direction, float deltaTime)
 	{
 		float velocity = MovementSpeed * deltaTime;
+		float tempY = Position[1];
 		if (direction == FORWARD)
 			Position += Front * velocity;
 		if (direction == BACKWARD)
@@ -83,7 +84,8 @@ public:
 		if (direction == LEFT)
 			Position -= Right * velocity;
 		if (direction == RIGHT)
-			Position += Right * velocity;		
+			Position += Right * velocity;
+		Position[1] = tempY;
 	}
 
 	void setCrouch(bool setting) {
