@@ -83,25 +83,11 @@ unsigned int loadCubemap(std::vector<std::string> faces) {
 }
 
 void constructScene(Shader s) {
-	s.setInt("code", modelMap["chairs1"].getCode());
-	s.setMat4("model", transMap["chairs1"]);
-	modelMap["chairs1"].Draw(s);
-
-	s.setInt("code", modelMap["chairs2"].getCode());
-	s.setMat4("model", transMap["chairs2"]);
-	modelMap["chairs2"].Draw(s);
-
-	s.setInt("code", modelMap["chairs3"].getCode());
-	s.setMat4("model", transMap["chairs3"]);
-	modelMap["chairs3"].Draw(s);
-
-	s.setInt("code", modelMap["chairs4"].getCode());
-	s.setMat4("model", transMap["chairs4"]);
-	modelMap["chairs4"].Draw(s);
-
-	s.setInt("code", modelMap["person1"].getCode());
-	s.setMat4("model", transMap["person1"]);
-	modelMap["person1"].Draw(s);
+	for (auto it = modelMap.begin(); it != modelMap.end(); it++) {
+		if (s.ID == selection.ID) { s.setInt("code", (it->second).getCode()); }
+		s.setMat4("model", transMap[it->first]);
+		(it->second).Draw(s);
+	}
 }
 
 int main()
@@ -182,7 +168,7 @@ int main()
 
 	// load models
 	// -----------
-	modelMap["train"]   = Model("../objects/MapDemo2.obj");
+	//modelMap["train"]   = Model("../objects/MapDemo2.obj");
 	modelMap["chairs1"] = Model("../objects/chairTest.obj");
 	modelMap["chairs2"] = Model("../objects/chairTest.obj");
 	modelMap["chairs3"] = Model("../objects/chairTest.obj");
@@ -273,7 +259,7 @@ int main()
 		selection.use();
 		constructScene(selection);
 
-		glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
+		//glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
 
 		// draw skybox as last
 /*		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -291,13 +277,23 @@ int main()
 */
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
-		glGetIntegerv(GL_VIEWPORT, viewport);
+		//glGetIntegerv(GL_VIEWPORT, viewport);
 		//std::cout << "CurrX: " << currX << " CurrY: " << currY << " PixelY: " << viewport[3] - currY << std::endl;
-		glReadPixels(SCR_WIDTH/2, SCR_HEIGHT/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
+		//glReadPixels(SCR_WIDTH/2, SCR_HEIGHT/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
 		/*
 		if (int(res[0]) != 0) {
 			std::cout << (int)res[0] << std::endl;
 		}
+		*/
+		/*
+		glEnable(GL_DEPTH);
+		glEnable(GL_BLEND);
+
+		ourShader.setMat4("projection", projection);
+		ourShader.setMat4("view", view);
+
+		ourShader.use();
+		constructScene(ourShader);
 		*/
 
 		glfwSwapBuffers(window);
@@ -356,19 +352,21 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 				focusModel = it->second;
 			}
 		}
-		switch (focusModel.getType()) {
-			case NONE:
-				std::cout << focusModel.getCode() << ": Pretty, but uninteractable." << std::endl;
-				break;
-			case PERSON:
-				std::cout << focusModel.getCode() << ": How's it going?" << std::endl;
-				break;
-			case CHAIR:
-				std::cout << focusModel.getCode() << ": We should sit down." << std::endl;
-				camera.Position = glm::vec3(transMap[modelStr][3]);
-				camera.Position[1] = -0.5;
-				camera.setSitting();
-				break;
+		if (glm::distance(camera.Position, glm::vec3(transMap[modelStr][3])) < 7.0f) {
+			switch (focusModel.getType()) {
+				case NONE:
+					std::cout << focusModel.getCode() << ": Pretty, but uninteractable." << std::endl;
+					break;
+				case PERSON:
+					std::cout << focusModel.getCode() << ": How's it going?" << std::endl;
+					break;
+				case CHAIR:
+					std::cout << focusModel.getCode() << ": I'll sit down." << std::endl;
+					camera.Position = glm::vec3(transMap[modelStr][3]);
+					camera.Position[1] = -0.5;
+					camera.setSitting();
+					break;
+			}
 		}
 	}
 		
