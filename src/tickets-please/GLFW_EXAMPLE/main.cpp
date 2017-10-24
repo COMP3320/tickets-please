@@ -365,6 +365,9 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 				break;
 			case CHAIR:
 				std::cout << focusModel.getCode() << ": We should sit down." << std::endl;
+				camera.Position = glm::vec3(transMap[modelStr][3]);
+				camera.Position[1] = -0.5;
+				camera.setSitting();
 				break;
 		}
 	}

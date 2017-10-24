@@ -44,7 +44,7 @@ public:
 	float MouseSensitivity;
 	float Zoom;
 	int test = 0;
-	bool isCrouched;
+	bool isCrouched, isSitting;
 
 	// Constructor with vectors
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
@@ -81,13 +81,14 @@ public:
 		pos2 = Position - Front * velocity;
 		pos3 = Position - Right * velocity;
 		pos4 = Position + Right * velocity;
+
 		bool boundCheck = boundaryCheck(direction, areaMap, bb, arrLength, pos1, pos2, pos3, pos4);
 //		std::cout << "Curr position x " << Position.x << "Curr position y " << Position.y << "Curr position z " << Position.z << std::endl;
 //		std::cout << "Max x " << bb[1].getMax().x << "Min x " << bb[1].getMin().x << "Max y " << bb[1].getMax().y << "Min y " << bb[1].getMin().y << "Max z " << bb[1].getMax().z << "Min z " << bb[1].getMin().z << std::endl;
-		if (direction == FORWARD	&& boundCheck)	{ Position = pos1; }
-		if (direction == BACKWARD	&& boundCheck)	{ Position = pos2; }
-		if (direction == LEFT		&& boundCheck)	{ Position = pos3; }
-		if (direction == RIGHT		&& boundCheck)	{ Position = pos4; }
+		if (direction == FORWARD	&& (boundCheck || isSitting))	{ Position = pos1; }
+		if (direction == BACKWARD	&& (boundCheck || isSitting))	{ Position = pos2; }
+		if (direction == LEFT		&& (boundCheck || isSitting))	{ Position = pos3; }
+		if (direction == RIGHT		&& (boundCheck || isSitting))	{ Position = pos4; }
 	}
 
 	bool boundaryCheck(Camera_Movement direction, BoundBox areaMap, BoundBox bb[], int arrLength, glm::vec3 pos1, glm::vec3 pos2, glm::vec3 pos3, glm::vec3 pos4)
@@ -125,12 +126,15 @@ public:
 				boundCheck = boundCheck && !(pos4.x < bb[i].getMax().x && pos4.x > bb[i].getMin().x && pos4.z < bb[i].getMax().z && pos4.z > bb[i].getMin().z);
 			}
 		}
+		if (boundCheck == true && isSitting) { 
+			isSitting = false; 
+			Position[1] = 0.0f;
+		}
 		return boundCheck;
 	}
 
-	void setCrouch(bool setting) {
-		Position[1] = (setting == true ? -0.5f : 0.0f);
-	}
+	void setCrouch(bool setting) { Position[1] = ((setting == true || isSitting) ? -0.5f : 0.0f); }
+	void setSitting() { isSitting = true; }
 
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
