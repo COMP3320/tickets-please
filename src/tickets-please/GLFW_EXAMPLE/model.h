@@ -21,6 +21,8 @@ using namespace std;
 
 unsigned int TextureFromFile(const char *path, const string &directory, bool gamma = false);
 
+enum InteractType { NONE, CHAIR, PERSON, POLE };
+
 class Model
 {
 public:
@@ -32,35 +34,28 @@ public:
 
 	/*  Functions   */
 	// constructor, expects a filepath to a 3D model.
-	Model()
-	{}
-
+	Model()	{}
 	Model(string const &path, bool gamma = false) : gammaCorrection(gamma)
 	{
 		loadModel(path);
 	}
-
 	// draws the model, and thus all its meshes
 	void Draw(Shader shader)
 	{
 		for (unsigned int i = 0; i < meshes.size(); i++)
 			meshes[i].Draw(shader);
 	}
-
-	glm::vec3 getMaxCords()
-	{
-		return maxCords;
-	}
-
-	glm::vec3 getMinCords()
-	{
-		return minCords;
-	}
-
-
+	glm::vec3 getMaxCords()	{ return maxCords; }
+	glm::vec3 getMinCords()	{ return minCords; }
+	void setCode(int c) { code = c; }
+	int  getCode()  { return code;  }
+	void setType(InteractType t) { interType = t; }
+	InteractType getType() { return interType; }
 
 private:
 	glm::vec3 maxCords, minCords;
+	int code;
+	InteractType interType;
 	/*  Functions   */
 	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 	void loadModel(string const &path)
@@ -117,31 +112,12 @@ private:
 			vector.y = mesh->mVertices[i].y;
 			vector.z = mesh->mVertices[i].z;
 
-			if (i == 0 || vector.x > maxCords.x)
-			{
-				maxCords.x = vector.x;
-
-			}
-			if (i == 0 || vector.y > maxCords.y)
-			{
-				maxCords.y = vector.y;
-			}
-			if (i == 0 || vector.z > maxCords.z)
-			{
-				maxCords.z = vector.z;
-			}
-			if (i == 0 || vector.x < minCords.x)
-			{
-				minCords.x = vector.x;
-			}
-			if (i == 0 || vector.y < minCords.y)
-			{
-				minCords.y = vector.y;
-			}
-			if (i == 0 || vector.z < minCords.z)
-			{
-				minCords.z = vector.z;
-			}
+			if (i == 0 || vector.x > maxCords.x){ maxCords.x = vector.x; }
+			if (i == 0 || vector.y > maxCords.y){ maxCords.y = vector.y; }
+			if (i == 0 || vector.z > maxCords.z){ maxCords.z = vector.z; }
+			if (i == 0 || vector.x < minCords.x){ minCords.x = vector.x; }
+			if (i == 0 || vector.y < minCords.y){ minCords.y = vector.y; }
+			if (i == 0 || vector.z < minCords.z){ minCords.z = vector.z; }
 
 			vertex.Position = vector;
 			// normals

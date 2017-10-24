@@ -38,9 +38,21 @@ float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 float currX, currY;
+
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+// store models in a model map!
+struct modelComp {
+	bool operator() (const std::string& lhs, const std::string& rhs) const {
+		return lhs < rhs;
+	}
+};
+std::map<std::string, Model, modelComp> modelMap;
+
+// store model transforms in a transform map!
+std::map<std::string, glm::mat4> transMap;
 
 Shader selection;
 
@@ -68,6 +80,28 @@ unsigned int loadCubemap(std::vector<std::string> faces) {
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 	return textureID;
+}
+
+void constructScene(Shader s) {
+	s.setInt("code", modelMap["chairs1"].getCode());
+	s.setMat4("model", transMap["chairs1"]);
+	modelMap["chairs1"].Draw(s);
+
+	s.setInt("code", modelMap["chairs2"].getCode());
+	s.setMat4("model", transMap["chairs2"]);
+	modelMap["chairs2"].Draw(s);
+
+	s.setInt("code", modelMap["chairs3"].getCode());
+	s.setMat4("model", transMap["chairs3"]);
+	modelMap["chairs3"].Draw(s);
+
+	s.setInt("code", modelMap["chairs4"].getCode());
+	s.setMat4("model", transMap["chairs4"]);
+	modelMap["chairs4"].Draw(s);
+
+	s.setInt("code", modelMap["person1"].getCode());
+	s.setMat4("model", transMap["person1"]);
+	modelMap["person1"].Draw(s);
 }
 
 int main()
@@ -148,13 +182,52 @@ int main()
 
 	// load models
 	// -----------
+	modelMap["train"]   = Model("../objects/MapDemo2.obj");
+	modelMap["chairs1"] = Model("../objects/chairTest.obj");
+	modelMap["chairs2"] = Model("../objects/chairTest.obj");
+	modelMap["chairs3"] = Model("../objects/chairTest.obj");
+	modelMap["chairs4"] = Model("../objects/chairTest.obj");
+	modelMap["person1"] = Model("../objects/person.obj");
 
-	Model ourModel("../objects/MapDemo2.obj");
-	Model chairSet1("../objects/chairTest.obj");
-	Model chairSet2("../objects/chairTest.obj");
-	Model chairSet3("../objects/chairTest.obj");
-	Model chairSet4("../objects/chairTest.obj");
-	Model person("../objects/person.obj");
+	// set models in scene
+	glm::mat4 chairs1_mat;
+	chairs1_mat = glm::rotate(chairs1_mat, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
+	chairs1_mat = glm::translate(chairs1_mat, glm::vec3(7.0f, -3.0f, 4.5f));
+	transMap["chairs1"] = chairs1_mat;
+
+	glm::mat4 chairs2_mat;
+	chairs2_mat = glm::rotate(chairs2_mat, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
+	chairs2_mat = glm::translate(chairs2_mat, glm::vec3(-2.0f, -3.0f, 4.0f));
+	transMap["chairs2"] = chairs2_mat;
+
+	glm::mat4 chairs3_mat;
+	chairs3_mat = glm::rotate(chairs3_mat, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
+	chairs3_mat = glm::translate(chairs3_mat, glm::vec3(-2.0f, -3.0f, -4.25f));
+	transMap["chairs3"] = chairs3_mat;
+
+	glm::mat4 chairs4_mat;
+	chairs4_mat = glm::rotate(chairs4_mat, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
+	chairs4_mat = glm::translate(chairs4_mat, glm::vec3(7.0f, -3.0f, -4.0f));
+	transMap["chairs4"] = chairs4_mat;
+
+	glm::mat4 person1_mat;
+	person1_mat = glm::scale(person1_mat, glm::vec3(0.4f, 0.4f, 0.4f));
+	person1_mat = glm::translate(person1_mat, glm::vec3(14.0f, -7.5f, -11.5f));
+	person1_mat = glm::rotate(person1_mat, 1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
+	transMap["person1"] = person1_mat;
+
+	// set models interactive type
+	int i = 100;
+	for (auto it = modelMap.begin(); it != modelMap.end(); it++, i++) {
+		(it->second).setCode(i);
+		std::string typeStr = (it->first).substr(0, 6);
+		if (typeStr == "chairs")		{ (it->second).setType(CHAIR);  }
+		else if (typeStr == "person")	{ (it->second).setType(PERSON); }
+		else							{ (it->second).setType(NONE); }
+	}
+
+	// load bounding boxes
+
 	BoundBox bb[5] = {	BoundBox(glm::vec3(7.1f, 2.0f, -5.7f), glm::vec3(1.3, -2.0f, -7.8f)),
 						BoundBox(glm::vec3(-1.1f, 2.0f, -5.7f), glm::vec3(-7.3, -2.0f, -7.8f)),
 						BoundBox(glm::vec3(-1.1f, 2.0f, -1.2f), glm::vec3(-7.3, -2.0f, -3.0f)),
@@ -185,7 +258,7 @@ int main()
 
 		// input
 		// -----
-		processInput(window, areaMap, bb, sizeof(bb)/sizeof(bb[0]));
+		processInput(window, areaMap, bb, sizeof(bb) / sizeof(bb[0]));
 
 		// render
 		// ------
@@ -198,40 +271,10 @@ int main()
 		selection.setMat4("view", view);
 
 		selection.use();
-		glm::mat4 model2;
-		model2 = glm::rotate(model2, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
-		model2 = glm::translate(model2, glm::vec3(7.0f, -3.0f, 4.5f));
-		selection.setInt("code", 100);
-		selection.setMat4("model", model2);
-		chairSet1.Draw(selection);
+		constructScene(selection);
 
 		glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
-/*
-		glm::mat4 model3;
-		model3 = glm::rotate(model3, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
-		model3 = glm::translate(model3, glm::vec3(-2.0f, -3.0f, 4.0f));
-		ourShader.setMat4("model", model3);
-		chairSet2.Draw(ourShader);
 
-		glm::mat4 model4;
-		model4 = glm::rotate(model4, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
-		model4 = glm::translate(model4, glm::vec3(-2.0f, -3.0f, -4.25f));
-		ourShader.setMat4("model", model4);
-		chairSet3.Draw(ourShader);
-
-		glm::mat4 model5;
-		model5 = glm::rotate(model5, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
-		model5 = glm::translate(model5, glm::vec3(7.0f, -3.0f, -4.0f));
-		ourShader.setMat4("model", model5);
-		chairSet4.Draw(ourShader);
-
-		glm::mat4 model6;
-		model6 = glm::scale(model6, glm::vec3(0.4f, 0.4f, 0.4f));
-		model6 = glm::translate(model6, glm::vec3(14.0f, -7.5f, -11.5f));
-		model6 = glm::rotate(model6, 1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
-		ourShader.setMat4("model", model6);
-		person.Draw(ourShader);
-*/
 		// draw skybox as last
 /*		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 		skyboxShader.use();
@@ -256,6 +299,7 @@ int main()
 			std::cout << (int)res[0] << std::endl;
 		}
 		*/
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -304,16 +348,31 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 		glGetIntegerv(GL_VIEWPORT, viewport);
 		glReadPixels(SCR_WIDTH / 2, SCR_HEIGHT / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
 
-		std::cout << (int)res[0] << std::endl;
+		std::string modelStr;
+		Model focusModel;
+		for (auto it = modelMap.begin(); it != modelMap.end(); it++) {
+			if ((it->second).getCode() == *res) {
+				modelStr = it->first;
+				focusModel = it->second;
+			}
+		}
+		switch (focusModel.getType()) {
+			case NONE:
+				std::cout << focusModel.getCode() << ": Pretty, but uninteractable." << std::endl;
+				break;
+			case PERSON:
+				std::cout << focusModel.getCode() << ": How's it going?" << std::endl;
+				break;
+			case CHAIR:
+				std::cout << focusModel.getCode() << ": We should sit down." << std::endl;
+				break;
+		}
 	}
 		
 }
 
 void renderSelection(void)
 {
-	Model chairSet1("../objects/chairTest.obj");
-	
-
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -322,12 +381,8 @@ void renderSelection(void)
 	selection.setMat4("view", view);
 
 	selection.use();
-	glm::mat4 model2;
-	model2 = glm::rotate(model2, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
-	model2 = glm::translate(model2, glm::vec3(7.0f, -3.0f, 4.5f));
-	selection.setInt("code", 100);
-	selection.setMat4("model", model2);
-	chairSet1.Draw(selection);
+	
+	constructScene(selection);
 
 	glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
 }
