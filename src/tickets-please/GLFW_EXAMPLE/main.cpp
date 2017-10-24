@@ -175,6 +175,7 @@ int main()
 	modelMap["chairs4"] = Model("../objects/chairTest.obj");
 	modelMap["person1"] = Model("../objects/person.obj");
 //	modelMap["ticketTest"] = Model("../objects/Ticket.obj");
+//	modelMap["IDTest"] = Model("../objects/ID.obj");
 	// set models in scene
 	glm::mat4 train_mat;
 	train_mat = glm::translate(train_mat, glm::vec3(0.0f, -1.0f, -4.5f));

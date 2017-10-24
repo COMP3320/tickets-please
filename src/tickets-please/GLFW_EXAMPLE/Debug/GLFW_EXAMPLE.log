@@ -1,3 +1,1 @@
-﻿main.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  GLFW_EXAMPLE.vcxproj -> C:\Users\Tristan\Documents\GitHub\tickets-please\src\tickets-please\Debug\GLFW_EXAMPLE1.exe
+﻿  GLFW_EXAMPLE.vcxproj -> C:\Users\Tristan\Documents\GitHub\tickets-please\src\tickets-please\Debug\GLFW_EXAMPLE1.exe
