@@ -250,16 +250,13 @@ int main()
 		// ------
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		ourShader.use();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
-		selection.setMat4("projection", projection);
-		selection.setMat4("view", view);
+		ourShader.setMat4("projection", projection);
+		ourShader.setMat4("view", view);
 
-		selection.use();
-		constructScene(selection);
-
-		//glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
+		constructScene(ourShader);
 
 		// draw skybox as last
 /*		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -304,7 +301,6 @@ int main()
 	// ------------------------------------------------------------------
 	glDeleteVertexArrays(1, &skyboxVAO);
 	glDeleteBuffers(1, &skyboxVAO);
-
 	glfwTerminate();
 	return 0;
 }
@@ -340,10 +336,11 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 	GLint viewport[4];
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		//renderSelection();
+		renderSelection();
 		glGetIntegerv(GL_VIEWPORT, viewport);
 		glReadPixels(SCR_WIDTH / 2, SCR_HEIGHT / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
 
+		std::cout << (int)res[0] << std::endl;
 		std::string modelStr;
 		Model focusModel;
 		for (auto it = modelMap.begin(); it != modelMap.end(); it++) {
@@ -354,18 +351,18 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 		}
 		if (glm::distance(camera.Position, glm::vec3(transMap[modelStr][3])) < 7.0f) {
 			switch (focusModel.getType()) {
-				case NONE:
-					std::cout << focusModel.getCode() << ": Pretty, but uninteractable." << std::endl;
-					break;
-				case PERSON:
-					std::cout << focusModel.getCode() << ": How's it going?" << std::endl;
-					break;
-				case CHAIR:
-					std::cout << focusModel.getCode() << ": I'll sit down." << std::endl;
-					camera.Position = glm::vec3(transMap[modelStr][3]);
-					camera.Position[1] = -0.5;
-					camera.setSitting();
-					break;
+			case NONE:
+				std::cout << focusModel.getCode() << ": Pretty, but uninteractable." << std::endl;
+				break;
+			case PERSON:
+				std::cout << focusModel.getCode() << ": How's it going?" << std::endl;
+				break;
+			case CHAIR:
+				std::cout << focusModel.getCode() << ": I'll sit down." << std::endl;
+				camera.Position = glm::vec3(transMap[modelStr][3]);
+				camera.Position[1] = -0.5;
+				camera.setSitting();
+				break;
 			}
 		}
 	}
@@ -374,14 +371,17 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 
 void renderSelection(void)
 {
+	unsigned char res[4];
+	GLint viewport[4];
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	selection.use();
+
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	selection.setMat4("projection", projection);
 	selection.setMat4("view", view);
-
-	selection.use();
 	
 	constructScene(selection);
 
