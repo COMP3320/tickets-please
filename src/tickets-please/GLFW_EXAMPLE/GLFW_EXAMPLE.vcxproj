@@ -95,6 +95,7 @@
     <Image Include="..\objects\test.png" />
     <Image Include="..\objects\testUV.png" />
     <Image Include="..\objects\testUV_out.png" />
+    <Image Include="..\objects\TicketUV.png" />
     <Image Include="..\objects\UVShit.png" />
     <Image Include="..\objects\wallTest.png" />
     <Image Include="arm_dif.png" />
@@ -125,6 +126,7 @@
     <None Include="..\objects\MapDemo2.mtl" />
     <None Include="..\objects\mapend.mtl" />
     <None Include="..\objects\person.mtl" />
+    <None Include="..\objects\Ticket.mtl" />
     <None Include="..\objects\Train.mtl" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
@@ -165,6 +167,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\objects\person.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\objects\Ticket.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\objects\Train.obj">

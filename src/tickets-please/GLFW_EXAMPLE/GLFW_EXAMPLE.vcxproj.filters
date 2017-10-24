@@ -110,6 +110,9 @@
     <Image Include="..\objects\UVShit.png">
       <Filter>Resource Files\objects</Filter>
     </Image>
+    <Image Include="..\objects\TicketUV.png">
+      <Filter>Resource Files\objects</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -156,6 +159,9 @@
     </None>
     <None Include="selection.vert">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\objects\Ticket.mtl">
+      <Filter>Resource Files\objects</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +216,9 @@
       <Filter>Resource Files\objects</Filter>
     </Object>
     <Object Include="..\objects\MapDemo2.obj">
+      <Filter>Resource Files\objects</Filter>
+    </Object>
+    <Object Include="..\objects\Ticket.obj">
       <Filter>Resource Files\objects</Filter>
     </Object>
   </ItemGroup>

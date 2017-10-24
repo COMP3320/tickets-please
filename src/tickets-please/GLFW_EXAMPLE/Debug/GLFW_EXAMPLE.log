@@ -1,21 +1,3 @@
-﻿  main.cpp
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\shader.h(73): warning C4101: 'infoLog': unreferenced local variable
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\shader.h(72): warning C4101: 'success': unreferenced local variable
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\shader.h(157): warning C4101: 'infoLog': unreferenced local variable
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\shader.h(156): warning C4101: 'success': unreferenced local variable
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(245): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(238): warning C4101: 'viewport': unreferenced local variable
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(379): warning C4101: 'res': unreferenced local variable
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(380): warning C4101: 'viewport': unreferenced local variable
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(409): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(410): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(413): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(414): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(418): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(419): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(421): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(422): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-c:\users\tristan\documents\github\tickets-please\src\tickets-please\glfw_example\main.cpp(431): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-main.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
+﻿main.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   GLFW_EXAMPLE.vcxproj -> C:\Users\Tristan\Documents\GitHub\tickets-please\src\tickets-please\Debug\GLFW_EXAMPLE1.exe
