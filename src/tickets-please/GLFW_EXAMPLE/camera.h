@@ -77,29 +77,17 @@ public:
 	{	// && Position.x >= (bb.getMin()).x >= Position.x && Position.x <= (bb.getMax()).x && Position.z >= (bb.getMin()).z && Position.z <= (bb.getMax()).z
 		float velocity = MovementSpeed * deltaTime;
 		glm::vec3 pos1, pos2, pos3, pos4;
-		pos1 = (Position + Front*velocity);
-		pos2 = Position - Front*velocity;
+		pos1 = Position + Front * velocity;
+		pos2 = Position - Front * velocity;
 		pos3 = Position - Right * velocity;
 		pos4 = Position + Right * velocity;
 		bool boundCheck = boundaryCheck(direction, areaMap, bb, arrLength, pos1, pos2, pos3, pos4);
 //		std::cout << "Curr position x " << Position.x << "Curr position y " << Position.y << "Curr position z " << Position.z << std::endl;
 //		std::cout << "Max x " << bb[1].getMax().x << "Min x " << bb[1].getMin().x << "Max y " << bb[1].getMax().y << "Min y " << bb[1].getMin().y << "Max z " << bb[1].getMax().z << "Min z " << bb[1].getMin().z << std::endl;
-		if (direction == FORWARD && boundCheck)
-		{
-			Position = pos1;
-		}
-		if (direction == BACKWARD && boundCheck)
-		{
-			Position = pos2;
-		}
-		if (direction == LEFT && boundCheck)
-		{
-			Position = pos3;
-		}
-		if (direction == RIGHT && boundCheck)
-		{
-			Position = pos4;
-		}
+		if (direction == FORWARD	&& boundCheck)	{ Position = pos1; }
+		if (direction == BACKWARD	&& boundCheck)	{ Position = pos2; }
+		if (direction == LEFT		&& boundCheck)	{ Position = pos3; }
+		if (direction == RIGHT		&& boundCheck)	{ Position = pos4; }
 	}
 
 	bool boundaryCheck(Camera_Movement direction, BoundBox areaMap, BoundBox bb[], int arrLength, glm::vec3 pos1, glm::vec3 pos2, glm::vec3 pos3, glm::vec3 pos4)
