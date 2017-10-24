@@ -168,7 +168,7 @@ int main()
 
 	// load models
 	// -----------
-	//modelMap["train"]   = Model("../objects/MapDemo2.obj");
+	modelMap["train"]   = Model("../objects/MapDemo2.obj");
 	modelMap["chairs1"] = Model("../objects/chairTest.obj");
 	modelMap["chairs2"] = Model("../objects/chairTest.obj");
 	modelMap["chairs3"] = Model("../objects/chairTest.obj");
@@ -176,6 +176,10 @@ int main()
 	modelMap["person1"] = Model("../objects/person.obj");
 
 	// set models in scene
+	glm::mat4 train_mat;
+	train_mat = glm::translate(train_mat, glm::vec3(0.0f, -1.0f, -4.5f));
+	transMap["train"] = train_mat;
+
 	glm::mat4 chairs1_mat;
 	chairs1_mat = glm::rotate(chairs1_mat, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
 	chairs1_mat = glm::translate(chairs1_mat, glm::vec3(7.0f, -3.0f, 4.5f));
@@ -259,7 +263,7 @@ int main()
 		constructScene(ourShader);
 
 		// draw skybox as last
-/*		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 		skyboxShader.use();
 		view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
 		skyboxShader.setMat4("view", view);
@@ -271,7 +275,7 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // set depth function back to default
-*/
+/**/
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		//glGetIntegerv(GL_VIEWPORT, viewport);
@@ -301,6 +305,7 @@ int main()
 	// ------------------------------------------------------------------
 	glDeleteVertexArrays(1, &skyboxVAO);
 	glDeleteBuffers(1, &skyboxVAO);
+
 	glfwTerminate();
 	return 0;
 }
