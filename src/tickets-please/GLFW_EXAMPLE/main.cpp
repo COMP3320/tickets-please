@@ -249,10 +249,13 @@ int main()
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glGetIntegerv(GL_VIEWPORT, viewport);
-		glReadPixels(currX, viewport[3] - currY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
-
-		std::cout << (int)res[0] << std::endl;
-		
+		//std::cout << "CurrX: " << currX << " CurrY: " << currY << " PixelY: " << viewport[3] - currY << std::endl;
+		glReadPixels(SCR_WIDTH/2, SCR_HEIGHT/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
+		/*
+		if (int(res[0]) != 0) {
+			std::cout << (int)res[0] << std::endl;
+		}
+		*/
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -297,9 +300,9 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 	GLint viewport[4];
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		renderSelection();
+		//renderSelection();
 		glGetIntegerv(GL_VIEWPORT, viewport);
-		glReadPixels(currX, viewport[3] - currY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
+		glReadPixels(SCR_WIDTH / 2, SCR_HEIGHT / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
 
 		std::cout << (int)res[0] << std::endl;
 	}
