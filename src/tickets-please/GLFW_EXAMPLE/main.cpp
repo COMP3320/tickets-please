@@ -108,6 +108,65 @@ void constructScene(Shader s) {
 	}
 }
 
+void setupModels() {
+	modelMap["chairs1"].model = Model("../objects/chairTest.obj");
+	modelMap["chairs2"].model = Model("../objects/chairTest.obj");
+	modelMap["chairs3"].model = Model("../objects/chairTest.obj");
+	modelMap["chairs4"].model = Model("../objects/chairTest.obj");
+	modelMap["person1"].model = Model("../objects/person.obj");
+	modelMap["ticket"].model = Model("../objects/Ticket.obj");
+	modelMap["id"].model = Model("../objects/ID.obj");
+
+	modelMap["ticket"].rendered = false;
+	modelMap["id"].rendered = false;
+
+	glm::mat4 chairs1_mat;
+	chairs1_mat = glm::rotate(chairs1_mat, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
+	chairs1_mat = glm::translate(chairs1_mat, glm::vec3(7.0f, -3.0f, 4.5f));
+	modelMap["chairs1"].transform = chairs1_mat;
+
+	glm::mat4 chairs2_mat;
+	chairs2_mat = glm::rotate(chairs2_mat, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
+	chairs2_mat = glm::translate(chairs2_mat, glm::vec3(-2.0f, -3.0f, 4.0f));
+	modelMap["chairs2"].transform = chairs2_mat;
+
+	glm::mat4 chairs3_mat;
+	chairs3_mat = glm::rotate(chairs3_mat, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
+	chairs3_mat = glm::translate(chairs3_mat, glm::vec3(-2.0f, -3.0f, -4.25f));
+	modelMap["chairs3"].transform = chairs3_mat;
+
+	glm::mat4 chairs4_mat;
+	chairs4_mat = glm::rotate(chairs4_mat, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
+	chairs4_mat = glm::translate(chairs4_mat, glm::vec3(7.0f, -3.0f, -4.0f));
+	modelMap["chairs4"].transform = chairs4_mat;
+
+	glm::mat4 person1_mat;
+	person1_mat = glm::scale(person1_mat, glm::vec3(0.4f, 0.4f, 0.4f));
+	person1_mat = glm::translate(person1_mat, glm::vec3(14.0f, -7.5f, -11.5f));
+	person1_mat = glm::rotate(person1_mat, 1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
+	modelMap["person1"].transform = person1_mat;
+
+	glm::mat4 ticket_mat;
+	ticket_mat = glm::translate(ticket_mat, glm::vec3(4.5f, 0.0f, -5.0f));
+	ticket_mat = glm::scale(ticket_mat, glm::vec3(0.1f, 0.1f, 0.1f));
+	modelMap["ticket"].transform = ticket_mat;
+
+	glm::mat4 id_mat;
+	id_mat = glm::translate(id_mat, glm::vec3(4.5f, 0.0f, -4.25f));
+	id_mat = glm::scale(id_mat, glm::vec3(0.1f, 0.1f, 0.1f));
+	modelMap["id"].transform = id_mat;
+
+	// set models interactive type
+	int i = 100;
+	for (auto it = modelMap.begin(); it != modelMap.end(); it++, i++) {
+		(it->second).code = i;
+		std::string typeStr = (it->first).substr(0, 6);
+		if (typeStr == "chairs") { (it->second).type = CHAIR; }
+		else if (typeStr == "person") { (it->second).type = PERSON; }
+		else { (it->second).type = NONE; }
+	}
+}
+
 int main()
 {
 	// glfw: initialize and configure
@@ -186,35 +245,17 @@ int main()
 
 	// load models
 	// -----------
-	//modelMap["train"]   = Model("../objects/MapDemo2.obj");
-	/*
-	modelMap["chairs1"] = modelContainer();
-	modelMap["chairs2"] = modelContainer();
-	modelMap["chairs3"] = modelContainer();
-	modelMap["chairs4"] = modelContainer();
-	modelMap["person1"] = modelContainer();
-	modelMap["ticket"]  = modelContainer();
-	modelMap["id"]      = modelContainer();
-	*/
 	modelMap["chairs1"].model = Model("../objects/chairTest.obj");
 	modelMap["chairs2"].model = Model("../objects/chairTest.obj");
 	modelMap["chairs3"].model = Model("../objects/chairTest.obj");
 	modelMap["chairs4"].model = Model("../objects/chairTest.obj");
 	modelMap["person1"].model = Model("../objects/person.obj");
-	modelMap["ticket"].model  = Model("../objects/Ticket.obj");
-	modelMap["id"].model	  = Model("../objects/ID.obj");
+	modelMap["ticket"].model = Model("../objects/Ticket.obj");
+	modelMap["id"].model = Model("../objects/ID.obj");
 
 	modelMap["ticket"].rendered = false;
 	modelMap["id"].rendered = false;
-
-	//Model ticket("../objects/Ticket.obj");
-	//Model id("../objects/ID.obj");
-
-	// set models in scene
-	//glm::mat4 train_mat;
-	//train_mat = glm::translate(train_mat, glm::vec3(0.0f, -1.0f, -4.5f));
-	//modelMap["train"].transform = train_mat;
-
+	//Create chair transforms
 	glm::mat4 chairs1_mat;
 	chairs1_mat = glm::rotate(chairs1_mat, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
 	chairs1_mat = glm::translate(chairs1_mat, glm::vec3(7.0f, -3.0f, 4.5f));
@@ -234,13 +275,13 @@ int main()
 	chairs4_mat = glm::rotate(chairs4_mat, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
 	chairs4_mat = glm::translate(chairs4_mat, glm::vec3(7.0f, -3.0f, -4.0f));
 	modelMap["chairs4"].transform = chairs4_mat;
-
+	//Create person transforms
 	glm::mat4 person1_mat;
 	person1_mat = glm::scale(person1_mat, glm::vec3(0.4f, 0.4f, 0.4f));
 	person1_mat = glm::translate(person1_mat, glm::vec3(14.0f, -7.5f, -11.5f));
 	person1_mat = glm::rotate(person1_mat, 1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMap["person1"].transform = person1_mat;
-
+	//Create ticket and ID transforms
 	glm::mat4 ticket_mat;
 	ticket_mat = glm::translate(ticket_mat, glm::vec3(4.5f, 0.0f, -5.0f));
 	ticket_mat = glm::scale(ticket_mat, glm::vec3(0.1f, 0.1f, 0.1f));
@@ -256,13 +297,12 @@ int main()
 	for (auto it = modelMap.begin(); it != modelMap.end(); it++, i++) {
 		(it->second).code = i;
 		std::string typeStr = (it->first).substr(0, 6);
-		if (typeStr == "chairs")		{ (it->second).type = CHAIR;  }
-		else if (typeStr == "person")	{ (it->second).type = PERSON; }
-		else							{ (it->second).type = NONE; }
+		if (typeStr == "chairs") { (it->second).type = CHAIR; }
+		else if (typeStr == "person") { (it->second).type = PERSON; }
+		else { (it->second).type = NONE; }
 	}
-
+	
 	// load bounding boxes
-
 	BoundBox bb[5] = {	BoundBox(glm::vec3(7.1f, 2.0f, -5.7f), glm::vec3(1.3, -2.0f, -7.8f)),
 						BoundBox(glm::vec3(-1.1f, 2.0f, -5.7f), glm::vec3(-7.3, -2.0f, -7.8f)),
 						BoundBox(glm::vec3(-1.1f, 2.0f, -1.2f), glm::vec3(-7.3, -2.0f, -3.0f)),
@@ -324,7 +364,7 @@ int main()
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		ourShader.use();
-		//glm::vec4 light_pos = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_position[0]"),	1, glm::value_ptr(lights[0].position));
@@ -335,12 +375,7 @@ int main()
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_colour[1]"),		1, glm::value_ptr(lights[1].colour));
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_colour[2]"),		1, glm::value_ptr(lights[2].colour));
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_colour[3]"),		1, glm::value_ptr(lights[3].colour));
-		/*
-		ourShader.setVec4("light_position", lights[0].position);
-		ourShader.setVec4("light_position", lights[1].position);
-		ourShader.setVec4("light_colour", lights[0].colour);
-		ourShader.setVec4("light_colour", lights[1].colour);
-		*/
+
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
 
@@ -348,28 +383,23 @@ int main()
 
 		if (flag == true)
 		{
-			switch (code)
-			{
-				case 104:
-					/*
-					ourShader.setMat4("model", ticket_mat);
-					ticket.Draw(ourShader);
+			/*
+			ourShader.setMat4("model", ticket_mat);
+			ticket.Draw(ourShader);
 
 					
-					ourShader.setMat4("model", id_mat);
-					id.Draw(ourShader);
-					*/
-					camera.Position.x = 3.079;
-					camera.Position.y = 0;
-					camera.Position.z = -4.62014;
+			ourShader.setMat4("model", id_mat);
+			id.Draw(ourShader);
+			*/
+			camera.Position.x = 3.079;
+			camera.Position.y = 0;
+			camera.Position.z = -4.62014;
 
-					camera.Yaw = 0.0f;
-					camera.Pitch = 0.0f;
-					camera.updateCameraVectors();
+			camera.Yaw = 0.0f;
+			camera.Pitch = 0.0f;
+			camera.updateCameraVectors();
 
-					//		flag = false;
-				break;
-			}
+			//		flag = false;
 		}
 
 		// draw skybox as last
@@ -425,6 +455,17 @@ int main()
 void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLength)
 {
 	int speed = 1;
+
+	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS && flag)
+		flag = false;
+
+	if (glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS && flag) {
+		modelMap["person1"].rendered = false;
+		modelMap["ticket"].rendered = false;
+		modelMap["id"].rendered = false;
+		flag = false;
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
@@ -475,7 +516,7 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 					std::cout << modelMap[modelStr].code << ": How's it going?" << std::endl;
 					flag = true;
 					modelMap["ticket"].rendered = true;
-					modelMap["id"].rendered = true;
+					modelMap["id"].rendered		= true;
 					code = modelMap[modelStr].code;
 					break;
 				case CHAIR:
@@ -491,7 +532,7 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 		{
 			flag = false;
 			modelMap["ticket"].rendered = false;
-			modelMap["id"].rendered = false;
+			modelMap["id"].rendered		= false;
 		}
 		
 	}
