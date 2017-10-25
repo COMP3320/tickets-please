@@ -89,12 +89,14 @@
   <ItemGroup>
     <Image Include="..\objects\endTest.png" />
     <Image Include="..\objects\floorTest.png" />
+    <Image Include="..\objects\ID.png" />
     <Image Include="..\objects\Material Diffuse Color.png" />
     <Image Include="..\objects\PoleUV.png" />
     <Image Include="..\objects\PoleUV_out.png" />
     <Image Include="..\objects\test.png" />
     <Image Include="..\objects\testUV.png" />
     <Image Include="..\objects\testUV_out.png" />
+    <Image Include="..\objects\TicketUV.png" />
     <Image Include="..\objects\UVShit.png" />
     <Image Include="..\objects\wallTest.png" />
     <Image Include="arm_dif.png" />
@@ -120,11 +122,13 @@
     <None Include="..\objects\basicmap.mtl" />
     <None Include="..\objects\chairTest.mtl" />
     <None Include="..\objects\endWall.mtl" />
+    <None Include="..\objects\ID.mtl" />
     <None Include="..\objects\Map.mtl" />
     <None Include="..\objects\map2.mtl" />
     <None Include="..\objects\MapDemo2.mtl" />
     <None Include="..\objects\mapend.mtl" />
     <None Include="..\objects\person.mtl" />
+    <None Include="..\objects\Ticket.mtl" />
     <None Include="..\objects\Train.mtl" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
@@ -152,6 +156,9 @@
     <Object Include="..\objects\endWall.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
+    <Object Include="..\objects\ID.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
     <Object Include="..\objects\Map.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
@@ -165,6 +172,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\objects\person.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\objects\Ticket.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\objects\Train.obj">

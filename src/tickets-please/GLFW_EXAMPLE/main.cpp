@@ -62,6 +62,13 @@ struct Light {
 
 Shader selection;
 
+/*
+ *	TEST GLOBALS FOR PERSON INTERACTION
+ */
+
+int code = 0;
+bool flag = false;
+
 unsigned int loadCubemap(std::vector<std::string> faces) {
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
@@ -181,6 +188,11 @@ int main()
 	modelMap["chairs3"] = Model("../objects/chairTest.obj");
 	modelMap["chairs4"] = Model("../objects/chairTest.obj");
 	modelMap["person1"] = Model("../objects/person.obj");
+//	modelMap["ticketTest"] = Model("../objects/Ticket.obj");
+//	modelMap["IDTest"] = Model("../objects/ID.obj");
+
+	Model ticket("../objects/Ticket.obj");
+	Model id("../objects/ID.obj");
 
 	// set models in scene
 	glm::mat4 train_mat;
@@ -308,6 +320,38 @@ int main()
 
 		constructScene(ourShader);
 
+		if (flag == true)
+		{
+			switch (code)
+			{
+				case 104:
+					glm::mat4 ticket_mat;
+				//	ticket_mat = glm::rotate(ticket_mat, 1.54f, glm::vec3(0.0f, 1.0f, 0.0f));
+					ticket_mat = glm::translate(ticket_mat, glm::vec3(4.5f, 0.0f, -5.0f));
+					ticket_mat = glm::scale(ticket_mat, glm::vec3(0.1f, 0.1f, 0.1f));
+					ourShader.setMat4("model", ticket_mat);
+					ticket.Draw(ourShader);
+
+					glm::mat4 id_mat;
+				//	id_mat = glm::rotate(id_mat, 1.54f, glm::vec3(0.0f, 1.0f, 0.0f));
+					id_mat = glm::translate(id_mat, glm::vec3(4.5f, 0.0f, -4.25f));
+					id_mat = glm::scale(id_mat, glm::vec3(0.1f, 0.1f, 0.1f));
+					ourShader.setMat4("model", id_mat);
+					id.Draw(ourShader);
+
+					camera.Position.x = 3.079;
+					camera.Position.y = 0;
+					camera.Position.z = -4.62014;
+
+					camera.Yaw = 0.0f;
+					camera.Pitch = 0.0f;
+					camera.updateCameraVectors();
+
+					//		flag = false;
+				break;
+			}
+		}
+
 		// draw skybox as last
 		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 		skyboxShader.use();
@@ -371,14 +415,14 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
 		camera.setCrouch(false);
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime * speed, areaMap, bb, arrLength);
+		camera.ProcessKeyboard(FORWARD, deltaTime * speed, areaMap, bb, arrLength, flag);
 
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime * speed, areaMap, bb, arrLength);
+		camera.ProcessKeyboard(BACKWARD, deltaTime * speed, areaMap, bb, arrLength, flag);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime * speed, areaMap, bb, arrLength);
+		camera.ProcessKeyboard(LEFT, deltaTime * speed, areaMap, bb, arrLength, flag);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime * speed, areaMap, bb, arrLength);
+		camera.ProcessKeyboard(RIGHT, deltaTime * speed, areaMap, bb, arrLength, flag);
 }
 
 void mouse_button_callback(GLFWwindow * window, int button, int action, int mods)
@@ -387,35 +431,45 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 	GLint viewport[4];
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
 	{
-		renderSelection();
-		glGetIntegerv(GL_VIEWPORT, viewport);
-		glReadPixels(SCR_WIDTH / 2, SCR_HEIGHT / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
+		if (flag == false)
+		{
+			renderSelection();
+			glGetIntegerv(GL_VIEWPORT, viewport);
+			glReadPixels(SCR_WIDTH / 2, SCR_HEIGHT / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
 
-		std::cout << (int)res[0] << std::endl;
-		std::string modelStr;
-		Model focusModel;
-		for (auto it = modelMap.begin(); it != modelMap.end(); it++) {
-			if ((it->second).getCode() == *res) {
-				modelStr = it->first;
-				focusModel = it->second;
+			std::cout << (int)res[0] << std::endl;
+			std::string modelStr;
+			Model focusModel;
+			for (auto it = modelMap.begin(); it != modelMap.end(); it++) {
+				if ((it->second).getCode() == *res) {
+					modelStr = it->first;
+					focusModel = it->second;
+				}
+			}
+			if (glm::distance(camera.Position, glm::vec3(transMap[modelStr][3])) < 7.0f) {
+				switch (focusModel.getType()) {
+				case NONE:
+					std::cout << focusModel.getCode() << ": Pretty, but uninteractable." << std::endl;
+					break;
+				case PERSON:
+					std::cout << focusModel.getCode() << ": How's it going?" << std::endl;
+					flag = true;
+					code = focusModel.getCode();
+					break;
+				case CHAIR:
+					std::cout << focusModel.getCode() << ": I'll sit down." << std::endl;
+					camera.Position = glm::vec3(transMap[modelStr][3]);
+					camera.Position[1] = -0.5;
+					camera.setSitting();
+					break;
+				}
 			}
 		}
-		if (glm::distance(camera.Position, glm::vec3(transMap[modelStr][3])) < 7.0f) {
-			switch (focusModel.getType()) {
-			case NONE:
-				std::cout << focusModel.getCode() << ": Pretty, but uninteractable." << std::endl;
-				break;
-			case PERSON:
-				std::cout << focusModel.getCode() << ": How's it going?" << std::endl;
-				break;
-			case CHAIR:
-				std::cout << focusModel.getCode() << ": I'll sit down." << std::endl;
-				camera.Position = glm::vec3(transMap[modelStr][3]);
-				camera.Position[1] = -0.5;
-				camera.setSitting();
-				break;
-			}
+		else
+		{
+			flag = false;
 		}
+		
 	}
 		
 }
@@ -467,7 +521,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	camera.ProcessMouseMovement(xoffset, yoffset, flag);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
