@@ -87,9 +87,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\objects\CanTex.png" />
     <Image Include="..\objects\endTest.png" />
     <Image Include="..\objects\floorTest.png" />
     <Image Include="..\objects\ID.png" />
+    <Image Include="..\objects\MapTex1.png" />
     <Image Include="..\objects\Material Diffuse Color.png" />
     <Image Include="..\objects\PoleUV.png" />
     <Image Include="..\objects\PoleUV_out.png" />
@@ -120,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\objects\basicmap.mtl" />
+    <None Include="..\objects\Can.mtl" />
     <None Include="..\objects\chairTest.mtl" />
     <None Include="..\objects\endWall.mtl" />
     <None Include="..\objects\ID.mtl" />
@@ -148,6 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\objects\basicmap.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\objects\Can.obj">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\objects\chairTest.obj">

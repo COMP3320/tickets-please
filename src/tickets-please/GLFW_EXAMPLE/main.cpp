@@ -41,6 +41,8 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 float currX, currY;
 
+float reposx, reposy;
+
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -74,6 +76,19 @@ Shader selection;
 
 int code = 0;
 bool flag = false;
+
+bool moveFlag = false;
+std::string moveModel = "";
+
+std::string modelSelect(int pickCode)
+{
+	switch (pickCode)
+	{
+		case 102:
+			return "chairs3";
+			break;
+	}
+}
 
 unsigned int loadCubemap(std::vector<std::string> faces) {
 	unsigned int textureID;
@@ -247,16 +262,20 @@ int main()
 
 	// load models
 	// -----------
-	modelMap["chairs1"].model = Model("../objects/chairTest.obj", chairs1_mat);
-	modelMap["chairs2"].model = Model("../objects/chairTest.obj", chairs2_mat);
+//	modelMap["chairs1"].model = Model("../objects/chairTest.obj", chairs1_mat);
+//	modelMap["chairs2"].model = Model("../objects/chairTest.obj", chairs2_mat);
 	modelMap["chairs3"].model = Model("../objects/chairTest.obj", chairs3_mat);
-	modelMap["chairs4"].model = Model("../objects/chairTest.obj", chairs4_mat);
+//	modelMap["chairs4"].model = Model("../objects/chairTest.obj", chairs4_mat);
 	modelMap["person1"].model = Model("../objects/person/person.obj",    person1_mat);
 	modelMap["person2"].model = Model("../objects/person/person.obj",    person2_mat);
 	modelMap["ticket1"].model = Model("../objects/ticket/Ticket.obj",    ticket1_mat);
 	modelMap["ticket2"].model = Model("../objects/ticket/Ticket.obj", ticket2_mat);
 	modelMap["id1"].model	  = Model("../objects/id/ID.obj",			 id1_mat);
 	modelMap["id2"].model = Model("../objects/id/ID.obj", id2_mat);
+
+	glm::mat4 can_mat;
+
+	Model can("../objects/can.obj", can_mat);
 
 	//BoundBox bb[10];
 	int count = 0;
@@ -282,10 +301,10 @@ int main()
 	
 	// load bounding boxes
 	BoundBox bb[10] = { 
-		BoundBox(modelMap["chairs1"].model.getMaxCords(), modelMap["chairs1"].model.getMinCords()),
-		BoundBox(modelMap["chairs2"].model.getMaxCords(), modelMap["chairs2"].model.getMinCords()),
+//		BoundBox(modelMap["chairs1"].model.getMaxCords(), modelMap["chairs1"].model.getMinCords()),
+//		BoundBox(modelMap["chairs2"].model.getMaxCords(), modelMap["chairs2"].model.getMinCords()),
 		BoundBox(modelMap["chairs3"].model.getMaxCords(), modelMap["chairs3"].model.getMinCords()),
-		BoundBox(modelMap["chairs4"].model.getMaxCords(), modelMap["chairs4"].model.getMinCords()),
+//		BoundBox(modelMap["chairs4"].model.getMaxCords(), modelMap["chairs4"].model.getMinCords()),
 		BoundBox(modelMap["person1"].model.getMaxCords(), modelMap["person1"].model.getMinCords()),
 		BoundBox(modelMap["person2"].model.getMaxCords(), modelMap["person2"].model.getMinCords()),
 		BoundBox(modelMap["ticket1"].model.getMaxCords(), modelMap["ticket1"].model.getMinCords()),
@@ -317,6 +336,14 @@ int main()
 	lights[3].position = glm::vec4(-1.0f, 0.0f, 3.0f, 1.0f);
 	int numFrames = 0;
 	glm::vec3 camSave;
+
+	GLfloat accel = -9.8;
+	GLfloat height = 100;
+	double velocity = 0.1;
+
+	glm::vec3 position(0, height, -10.f);
+	glm::mat4 IDMat;
+	can_mat = glm::translate(IDMat, glm::vec3(0.0f, 100.0f, -10.0f));
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -365,6 +392,21 @@ int main()
 		ourShader.setMat4("view", view);
 
 		constructScene(ourShader);
+		
+		//GRAVITY TESTING CODE
+
+		if (position.y > -1)
+		{
+			position.y -= (velocity*deltaTime) + (0.5*1.6*deltaTime*deltaTime);
+			velocity += (1.6*deltaTime);
+		}
+		glm::mat4 can_mat;
+		can_mat = glm::translate(can_mat, glm::vec3(position.x, position.y, position.z));
+		ourShader.setMat4("model", can_mat);
+		can.t = can_mat;
+		can.Draw(ourShader);
+
+		//END TEST
 
 		if (flag == true)
 		{
@@ -373,30 +415,6 @@ int main()
 			if (glm::distance(camera.Position, glm::vec3(modelMap[focusPerson].transform[3])) > 4) {
 				camera.Position = glm::vec3(modelMap[focusPerson].transform[3]) - glm::vec3(0.99 * toPerson.x, 0.99 * toPerson.y, 0.99 * toPerson.z);
 			}
-			/*
-			
-			toPerson[1] = 0.0f;
-			camera.Front = toPerson;
-			camera.Yaw = 0.0f;
-			*/
-			/*
-			ourShader.setMat4("model", ticket_mat);
-			ticket.Draw(ourShader);
-
-					
-			ourShader.setMat4("model", id_mat);
-			id.Draw(ourShader);
-			*/
-			/*
-			camera.Position.x = 3.079;
-			camera.Position.y = 0;
-			camera.Position.z = -4.62014;
-
-			camera.Yaw = 0.0f;
-			camera.Pitch = 0.0f;
-			camera.updateCameraVectors();
-			*/
-			//		flag = false;
 		}
 		else {
 			camSave = camera.Position;
@@ -415,27 +433,9 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // set depth function back to default
-/**/	
+
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
-		//glGetIntegerv(GL_VIEWPORT, viewport);
-		//std::cout << "CurrX: " << currX << " CurrY: " << currY << " PixelY: " << viewport[3] - currY << std::endl;
-		//glReadPixels(SCR_WIDTH/2, SCR_HEIGHT/2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
-		/*
-		if (int(res[0]) != 0) {
-			std::cout << (int)res[0] << std::endl;
-		}
-		*/
-		/*
-		glEnable(GL_DEPTH);
-		glEnable(GL_BLEND);
-
-		ourShader.setMat4("projection", projection);
-		ourShader.setMat4("view", view);
-
-		ourShader.use();
-		constructScene(ourShader);
-		*/
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -507,7 +507,7 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 					modelStr = it->first;
 				}
 			}
-			if (glm::distance(camera.Position, glm::vec3(modelMap[modelStr].transform[3])) < 7.0f) {
+			if (glm::distance(camera.Position, glm::vec3(modelMap[modelStr].transform[3])) < 7.0f && moveFlag == false) {
 				switch (modelMap[modelStr].type) {
 				case NONE:
 					std::cout << modelMap[modelStr].code << ": Pretty, but uninteractable." << std::endl;
@@ -522,9 +522,21 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 					break;
 				case CHAIR:
 					std::cout << modelMap[modelStr].code << ": I'll sit down." << std::endl;
-					camera.Position = glm::vec3((modelMap[modelStr].transform)[3]);
-					camera.Position[1] = -0.5;
-					camera.setSitting();
+					if (modelMap[modelStr].code != 102)
+					{
+						camera.Position = glm::vec3((modelMap[modelStr].transform)[3]);
+						camera.Position[1] = -0.5;
+						camera.setSitting();
+					}
+					else
+					{
+						std::cout << "Made it" << std::endl;
+						moveFlag = true;
+						moveModel = modelSelect(modelMap[modelStr].code);
+						std::cout << moveModel << std::endl;
+						reposx = 0;
+						reposy = 0;
+					}
 					break;
 				}
 			}
@@ -537,6 +549,11 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 			focusPerson = "";
 		}
 		
+	}
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+	{
+		moveFlag = false;
+		moveModel = "";
 	}
 		
 }
@@ -575,6 +592,36 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	currX = xpos;
 	currY = ypos;
+
+	if (moveFlag == true)
+	{
+		if (currX > lastX)
+		{
+			reposx = 0.005;
+		}
+		else if (currX < lastX)
+		{
+			reposx = -0.005;
+		}
+		else
+		{
+			reposx = 0;
+		}
+
+		if (currY > lastY)
+		{
+			reposy = -0.005;
+		}
+		else if(currY < lastY)
+		{
+			reposy = 0.005;
+		}
+		else
+		{
+			reposy = 0;
+		}
+	}
+
 	if (firstMouse)
 	{
 		lastX = xpos;
@@ -589,6 +636,17 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastY = ypos;
 
 	camera.ProcessMouseMovement(xoffset, yoffset, flag);
+	
+	if (moveFlag == true)
+	{
+		std::cout << "Made it" << std::endl;
+		glm::mat4 camMove = modelMap[moveModel].transform;
+		camMove = glm::translate(camMove, glm::vec3(reposx, reposy, 0));
+		modelMap[moveModel].transform = camMove;
+		modelMap[moveModel].model.t = camMove;	//not sure what t is
+		reposx = 0;
+		reposy = 0;
+	}
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

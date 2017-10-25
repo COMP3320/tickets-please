@@ -116,6 +116,12 @@
     <Image Include="..\objects\ID.png">
       <Filter>Resource Files\objects</Filter>
     </Image>
+    <Image Include="..\objects\MapTex1.png">
+      <Filter>Resource Files\objects</Filter>
+    </Image>
+    <Image Include="..\objects\CanTex.png">
+      <Filter>Resource Files\objects</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -169,6 +175,9 @@
     <None Include="..\objects\ID.mtl">
       <Filter>Resource Files\objects</Filter>
     </None>
+    <None Include="..\objects\Can.mtl">
+      <Filter>Resource Files\objects</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -218,9 +227,6 @@
     <Object Include="..\objects\person.obj">
       <Filter>Resource Files\objects</Filter>
     </Object>
-    <Object Include="..\objects\Train.obj">
-      <Filter>Resource Files\objects</Filter>
-    </Object>
     <Object Include="..\objects\MapDemo2.obj">
       <Filter>Resource Files\objects</Filter>
     </Object>
@@ -228,6 +234,12 @@
       <Filter>Resource Files\objects</Filter>
     </Object>
     <Object Include="..\objects\ID.obj">
+      <Filter>Resource Files\objects</Filter>
+    </Object>
+    <Object Include="..\objects\Train.obj">
+      <Filter>Resource Files\objects</Filter>
+    </Object>
+    <Object Include="..\objects\Can.obj">
       <Filter>Resource Files\objects</Filter>
     </Object>
   </ItemGroup>
