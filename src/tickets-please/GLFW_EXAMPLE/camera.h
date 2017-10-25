@@ -87,20 +87,23 @@ public:
 			bool boundCheck = boundaryCheck(direction, areaMap, bb, arrLength, pos1, pos2, pos3, pos4);
 			//		std::cout << "Curr position x " << Position.x << "Curr position y " << Position.y << "Curr position z " << Position.z << std::endl;
 			//		std::cout << "Max x " << bb[1].getMax().x << "Min x " << bb[1].getMin().x << "Max y " << bb[1].getMax().y << "Min y " << bb[1].getMin().y << "Max z " << bb[1].getMax().z << "Min z " << bb[1].getMin().z << std::endl;
-			if (direction == FORWARD && (boundCheck || isSitting)) { Position = pos1; }
-			if (direction == BACKWARD && (boundCheck || isSitting)) { Position = pos2; }
-			if (direction == LEFT && (boundCheck || isSitting)) { Position = pos3; }
-			if (direction == RIGHT && (boundCheck || isSitting)) { Position = pos4; }
+			/*
+			if (direction == FORWARD && (boundCheck)) { Position = pos1; }
+			if (direction == BACKWARD && (boundCheck)) { Position = pos2; }
+			if (direction == LEFT && (boundCheck)) { Position = pos3; }
+			if (direction == RIGHT && (boundCheck)) { Position = pos4; }
+			*/
 			//	std::cout << Position.x << " " << Position.y << " " << Position.z << std::endl;
 		}
 	}
 
 	bool boundaryCheck(Camera_Movement direction, BoundBox areaMap, BoundBox bb[], int arrLength, glm::vec3 pos1, glm::vec3 pos2, glm::vec3 pos3, glm::vec3 pos4)
 	{
+		bool areaCheck = true;
 		bool boundCheck = true;
 		if (direction == FORWARD)
 		{
-			boundCheck = boundCheck && (pos1.x < areaMap.getMax().x && pos1.x > areaMap.getMin().x && pos1.z < areaMap.getMax().z && pos1.z > areaMap.getMin().z);
+			areaCheck = areaCheck && (pos1.x < areaMap.getMax().x && pos1.x > areaMap.getMin().x && pos1.z < areaMap.getMax().z && pos1.z > areaMap.getMin().z);
 			for (int i = 0; i < arrLength; i++)
 			{
 				boundCheck = boundCheck && !(pos1.x < bb[i].getMax().x && pos1.x > bb[i].getMin().x && pos1.z < bb[i].getMax().z && pos1.z > bb[i].getMin().z);
@@ -108,7 +111,7 @@ public:
 		}
 		if (direction == BACKWARD)
 		{
-			boundCheck = boundCheck && (pos2.x < areaMap.getMax().x && pos2.x > areaMap.getMin().x && pos2.z < areaMap.getMax().z && pos2.z > areaMap.getMin().z);
+			areaCheck = areaCheck && (pos2.x < areaMap.getMax().x && pos2.x > areaMap.getMin().x && pos2.z < areaMap.getMax().z && pos2.z > areaMap.getMin().z);
 			for (int i = 0; i < arrLength; i++)
 			{
 				boundCheck = boundCheck && !(pos2.x < bb[i].getMax().x && pos2.x > bb[i].getMin().x && pos2.z < bb[i].getMax().z && pos2.z > bb[i].getMin().z);
@@ -116,7 +119,7 @@ public:
 		}
 		if (direction == LEFT)
 		{
-			boundCheck = boundCheck && (pos3.x < areaMap.getMax().x && pos3.x > areaMap.getMin().x && pos3.z < areaMap.getMax().z && pos3.z > areaMap.getMin().z);
+			areaCheck = areaCheck && (pos3.x < areaMap.getMax().x && pos3.x > areaMap.getMin().x && pos3.z < areaMap.getMax().z && pos3.z > areaMap.getMin().z);
 			for (int i = 0; i < arrLength; i++)
 			{
 				boundCheck = boundCheck && !(pos3.x < bb[i].getMax().x && pos3.x > bb[i].getMin().x && pos3.z < bb[i].getMax().z && pos3.z > bb[i].getMin().z);
@@ -124,17 +127,23 @@ public:
 		}
 		if (direction == RIGHT)
 		{
-			boundCheck = boundCheck && (pos4.x < areaMap.getMax().x && pos4.x > areaMap.getMin().x && pos4.z < areaMap.getMax().z && pos4.z > areaMap.getMin().z);
+			areaCheck = areaCheck && (pos4.x < areaMap.getMax().x && pos4.x > areaMap.getMin().x && pos4.z < areaMap.getMax().z && pos4.z > areaMap.getMin().z);
 			for (int i = 0; i < arrLength; i++)
 			{
 				boundCheck = boundCheck && !(pos4.x < bb[i].getMax().x && pos4.x > bb[i].getMin().x && pos4.z < bb[i].getMax().z && pos4.z > bb[i].getMin().z);
 			}
 		}
-		if (boundCheck == true && isSitting) { 
+		if (direction == FORWARD	&& (boundCheck || isSitting) && areaCheck) { Position = pos1; }
+		if (direction == BACKWARD	&& (boundCheck || isSitting) && areaCheck) { Position = pos2; }
+		if (direction == LEFT		&& (boundCheck || isSitting) && areaCheck) { Position = pos3; }
+		if (direction == RIGHT		&& (boundCheck || isSitting) && areaCheck) { Position = pos4; }
+
+		if (boundCheck && isSitting) { 
 			isSitting = false; 
 			Position[1] = 0.0f;
 		}
-		return boundCheck;
+		std::cout << (boundCheck && areaCheck) << std::endl;
+		return boundCheck && areaCheck;
 	}
 
 	void setCrouch(bool setting) { Position[1] = ((setting == true || isSitting) ? -0.5f : 0.0f); }
