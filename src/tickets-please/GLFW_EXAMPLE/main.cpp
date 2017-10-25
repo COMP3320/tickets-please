@@ -50,8 +50,10 @@ struct modelContainer {
 	bool rendered = true;
 	InteractType type = NONE;
 	int code;
+	std::string linkedID, linkedTicket;
 };
 std::map<std::string, modelContainer> modelMap;
+std::string focusPerson;
 
 // store model transforms in a transform map!
 //std::map<std::string, glm::mat4> transMap;
@@ -105,65 +107,6 @@ void constructScene(Shader s) {
 			s.setMat4("model", modelMap[it->first].transform);
 			(it->second).model.Draw(s);
 		}
-	}
-}
-
-void setupModels() {
-	modelMap["chairs1"].model = Model("../objects/chairTest.obj");
-	modelMap["chairs2"].model = Model("../objects/chairTest.obj");
-	modelMap["chairs3"].model = Model("../objects/chairTest.obj");
-	modelMap["chairs4"].model = Model("../objects/chairTest.obj");
-	modelMap["person1"].model = Model("../objects/person.obj");
-	modelMap["ticket"].model = Model("../objects/Ticket.obj");
-	modelMap["id"].model = Model("../objects/ID.obj");
-
-	modelMap["ticket"].rendered = false;
-	modelMap["id"].rendered = false;
-
-	glm::mat4 chairs1_mat;
-	chairs1_mat = glm::rotate(chairs1_mat, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
-	chairs1_mat = glm::translate(chairs1_mat, glm::vec3(7.0f, -3.0f, 4.5f));
-	modelMap["chairs1"].transform = chairs1_mat;
-
-	glm::mat4 chairs2_mat;
-	chairs2_mat = glm::rotate(chairs2_mat, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
-	chairs2_mat = glm::translate(chairs2_mat, glm::vec3(-2.0f, -3.0f, 4.0f));
-	modelMap["chairs2"].transform = chairs2_mat;
-
-	glm::mat4 chairs3_mat;
-	chairs3_mat = glm::rotate(chairs3_mat, 4.725f, glm::vec3(0.0f, 1.0f, 0.0f));
-	chairs3_mat = glm::translate(chairs3_mat, glm::vec3(-2.0f, -3.0f, -4.25f));
-	modelMap["chairs3"].transform = chairs3_mat;
-
-	glm::mat4 chairs4_mat;
-	chairs4_mat = glm::rotate(chairs4_mat, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
-	chairs4_mat = glm::translate(chairs4_mat, glm::vec3(7.0f, -3.0f, -4.0f));
-	modelMap["chairs4"].transform = chairs4_mat;
-
-	glm::mat4 person1_mat;
-	person1_mat = glm::scale(person1_mat, glm::vec3(0.4f, 0.4f, 0.4f));
-	person1_mat = glm::translate(person1_mat, glm::vec3(14.0f, -7.5f, -11.5f));
-	person1_mat = glm::rotate(person1_mat, 1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
-	modelMap["person1"].transform = person1_mat;
-
-	glm::mat4 ticket_mat;
-	ticket_mat = glm::translate(ticket_mat, glm::vec3(4.5f, 0.0f, -5.0f));
-	ticket_mat = glm::scale(ticket_mat, glm::vec3(0.1f, 0.1f, 0.1f));
-	modelMap["ticket"].transform = ticket_mat;
-
-	glm::mat4 id_mat;
-	id_mat = glm::translate(id_mat, glm::vec3(4.5f, 0.0f, -4.25f));
-	id_mat = glm::scale(id_mat, glm::vec3(0.1f, 0.1f, 0.1f));
-	modelMap["id"].transform = id_mat;
-
-	// set models interactive type
-	int i = 100;
-	for (auto it = modelMap.begin(); it != modelMap.end(); it++, i++) {
-		(it->second).code = i;
-		std::string typeStr = (it->first).substr(0, 6);
-		if (typeStr == "chairs") { (it->second).type = CHAIR; }
-		else if (typeStr == "person") { (it->second).type = PERSON; }
-		else { (it->second).type = NONE; }
 	}
 }
 
@@ -250,11 +193,15 @@ int main()
 	modelMap["chairs3"].model = Model("../objects/chairTest.obj");
 	modelMap["chairs4"].model = Model("../objects/chairTest.obj");
 	modelMap["person1"].model = Model("../objects/person.obj");
-	modelMap["ticket"].model = Model("../objects/Ticket.obj");
-	modelMap["id"].model = Model("../objects/ID.obj");
+	modelMap["person2"].model = Model("../objects/person.obj");
+	modelMap["ticket1"].model = Model("../objects/Ticket.obj");
+	modelMap["id1"].model = Model("../objects/ID.obj");
 
-	modelMap["ticket"].rendered = false;
-	modelMap["id"].rendered = false;
+	for (auto it = modelMap.begin(); it != modelMap.end(); it++) {
+		if ((it->first).substr(0, 6) == "ticket" || (it->first).substr(0, 2) == "id") {
+			modelMap[it->first].rendered = false;
+		}
+	}
 	//Create chair transforms
 	glm::mat4 chairs1_mat;
 	chairs1_mat = glm::rotate(chairs1_mat, 1.6f, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -281,16 +228,22 @@ int main()
 	person1_mat = glm::translate(person1_mat, glm::vec3(14.0f, -7.5f, -11.5f));
 	person1_mat = glm::rotate(person1_mat, 1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMap["person1"].transform = person1_mat;
+	
+	glm::mat4 person2_mat;
+	person2_mat = glm::scale(person2_mat, glm::vec3(0.4f, 0.4f, 0.4f));
+	person2_mat = glm::translate(person2_mat, glm::vec3(14.0f, -7.5f, -11.5f));
+	person2_mat = glm::rotate(person2_mat, 1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
+	modelMap["person2"].transform = person2_mat;
 	//Create ticket and ID transforms
 	glm::mat4 ticket_mat;
 	ticket_mat = glm::translate(ticket_mat, glm::vec3(4.5f, 0.0f, -5.0f));
 	ticket_mat = glm::scale(ticket_mat, glm::vec3(0.1f, 0.1f, 0.1f));
-	modelMap["ticket"].transform = ticket_mat;
+	modelMap["ticket1"].transform = ticket_mat;
 
 	glm::mat4 id_mat;
 	id_mat = glm::translate(id_mat, glm::vec3(4.5f, 0.0f, -4.25f));
 	id_mat = glm::scale(id_mat, glm::vec3(0.1f, 0.1f, 0.1f));
-	modelMap["id"].transform = id_mat;
+	modelMap["id1"].transform = id_mat;
 
 	// set models interactive type
 	int i = 100;
@@ -298,7 +251,11 @@ int main()
 		(it->second).code = i;
 		std::string typeStr = (it->first).substr(0, 6);
 		if (typeStr == "chairs") { (it->second).type = CHAIR; }
-		else if (typeStr == "person") { (it->second).type = PERSON; }
+		else if (typeStr == "person") { 
+			(it->second).type = PERSON; 
+			modelMap[it->first].linkedID = "id" + (it->first).substr(6);
+			modelMap[it->first].linkedTicket = "ticket" + (it->first).substr(6);
+		}
 		else { (it->second).type = NONE; }
 	}
 	
@@ -456,13 +413,15 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 {
 	int speed = 1;
 
-	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS && flag)
+	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS && flag) {
+		modelMap[modelMap[focusPerson].linkedID].rendered = false;
+		modelMap[modelMap[focusPerson].linkedTicket].rendered = false;
 		flag = false;
-
+	}
 	if (glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS && flag) {
-		modelMap["person1"].rendered = false;
-		modelMap["ticket"].rendered = false;
-		modelMap["id"].rendered = false;
+		modelMap[focusPerson].rendered = false;
+		modelMap[modelMap[focusPerson].linkedID].rendered = false;
+		modelMap[modelMap[focusPerson].linkedTicket].rendered = false;
 		flag = false;
 	}
 
@@ -514,9 +473,10 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 					break;
 				case PERSON:
 					std::cout << modelMap[modelStr].code << ": How's it going?" << std::endl;
+					focusPerson = modelStr;
 					flag = true;
-					modelMap["ticket"].rendered = true;
-					modelMap["id"].rendered		= true;
+					modelMap[modelMap[focusPerson].linkedID].rendered		= true;
+					modelMap[modelMap[focusPerson].linkedTicket].rendered	= true;
 					code = modelMap[modelStr].code;
 					break;
 				case CHAIR:
@@ -531,8 +491,9 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 		else
 		{
 			flag = false;
-			modelMap["ticket"].rendered = false;
-			modelMap["id"].rendered		= false;
+			modelMap[modelMap[focusPerson].linkedID].rendered		= false;
+			modelMap[modelMap[focusPerson].linkedTicket].rendered	= false;
+			focusPerson = "";
 		}
 		
 	}
