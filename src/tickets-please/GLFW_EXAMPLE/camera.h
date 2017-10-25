@@ -73,22 +73,26 @@ public:
 	}
 
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-	void ProcessKeyboard(Camera_Movement direction, float deltaTime, BoundBox areaMap, BoundBox bb[], int arrLength)
+	void ProcessKeyboard(Camera_Movement direction, float deltaTime, BoundBox areaMap, BoundBox bb[], int arrLength, bool flag)
 	{	// && Position.x >= (bb.getMin()).x >= Position.x && Position.x <= (bb.getMax()).x && Position.z >= (bb.getMin()).z && Position.z <= (bb.getMax()).z
-		float velocity = MovementSpeed * deltaTime;
-		glm::vec3 pos1, pos2, pos3, pos4;
-		pos1 = Position + Front * velocity;
-		pos2 = Position - Front * velocity;
-		pos3 = Position - Right * velocity;
-		pos4 = Position + Right * velocity;
+		if (flag == false)
+		{
+			float velocity = MovementSpeed * deltaTime;
+			glm::vec3 pos1, pos2, pos3, pos4;
+			pos1 = Position + Front * velocity;
+			pos2 = Position - Front * velocity;
+			pos3 = Position - Right * velocity;
+			pos4 = Position + Right * velocity;
 
-		bool boundCheck = boundaryCheck(direction, areaMap, bb, arrLength, pos1, pos2, pos3, pos4);
-//		std::cout << "Curr position x " << Position.x << "Curr position y " << Position.y << "Curr position z " << Position.z << std::endl;
-//		std::cout << "Max x " << bb[1].getMax().x << "Min x " << bb[1].getMin().x << "Max y " << bb[1].getMax().y << "Min y " << bb[1].getMin().y << "Max z " << bb[1].getMax().z << "Min z " << bb[1].getMin().z << std::endl;
-		if (direction == FORWARD	&& (boundCheck || isSitting))	{ Position = pos1; }
-		if (direction == BACKWARD	&& (boundCheck || isSitting))	{ Position = pos2; }
-		if (direction == LEFT		&& (boundCheck || isSitting))	{ Position = pos3; }
-		if (direction == RIGHT		&& (boundCheck || isSitting))	{ Position = pos4; }
+			bool boundCheck = boundaryCheck(direction, areaMap, bb, arrLength, pos1, pos2, pos3, pos4);
+			//		std::cout << "Curr position x " << Position.x << "Curr position y " << Position.y << "Curr position z " << Position.z << std::endl;
+			//		std::cout << "Max x " << bb[1].getMax().x << "Min x " << bb[1].getMin().x << "Max y " << bb[1].getMax().y << "Min y " << bb[1].getMin().y << "Max z " << bb[1].getMax().z << "Min z " << bb[1].getMin().z << std::endl;
+			if (direction == FORWARD && (boundCheck || isSitting)) { Position = pos1; }
+			if (direction == BACKWARD && (boundCheck || isSitting)) { Position = pos2; }
+			if (direction == LEFT && (boundCheck || isSitting)) { Position = pos3; }
+			if (direction == RIGHT && (boundCheck || isSitting)) { Position = pos4; }
+			//	std::cout << Position.x << " " << Position.y << " " << Position.z << std::endl;
+		}
 	}
 
 	bool boundaryCheck(Camera_Movement direction, BoundBox areaMap, BoundBox bb[], int arrLength, glm::vec3 pos1, glm::vec3 pos2, glm::vec3 pos3, glm::vec3 pos4)
@@ -137,25 +141,28 @@ public:
 	void setSitting() { isSitting = true; }
 
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
+	void ProcessMouseMovement(float xoffset, float yoffset, bool flag, GLboolean constrainPitch = true)
 	{
-		xoffset *= MouseSensitivity;
-		yoffset *= MouseSensitivity;
-
-		Yaw += xoffset;
-		Pitch += yoffset;
-
-		// Make sure that when pitch is out of bounds, screen doesn't get flipped
-		if (constrainPitch)
+		if (flag == false)
 		{
-			if (Pitch > 89.0f)
-				Pitch = 89.0f;
-			if (Pitch < -89.0f)
-				Pitch = -89.0f;
-		}
+			xoffset *= MouseSensitivity;
+			yoffset *= MouseSensitivity;
 
-		// Update Front, Right and Up Vectors using the updated Eular angles
-		updateCameraVectors();
+			Yaw += xoffset;
+			Pitch += yoffset;
+
+			// Make sure that when pitch is out of bounds, screen doesn't get flipped
+			if (constrainPitch)
+			{
+				if (Pitch > 89.0f)
+					Pitch = 89.0f;
+				if (Pitch < -89.0f)
+					Pitch = -89.0f;
+			}
+
+			// Update Front, Right and Up Vectors using the updated Eular angles
+			updateCameraVectors();
+		}
 	}
 
 	// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
@@ -169,7 +176,6 @@ public:
 			Zoom = 45.0f;
 	}
 
-private:
 	// Calculates the front vector from the Camera's (updated) Eular Angles
 	void updateCameraVectors()
 	{
