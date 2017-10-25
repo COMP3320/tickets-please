@@ -30,12 +30,12 @@ public:
 	vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
 	vector<Mesh> meshes;
 	string directory;
-	bool gammaCorrection;
+	glm::mat4 t;
 
 	/*  Functions   */
 	// constructor, expects a filepath to a 3D model.
 	Model()	{}
-	Model(string const &path, bool gamma = false) : gammaCorrection(gamma)
+	Model(string const &path, glm::mat4 trans) : t(trans)
 	{
 		loadModel(path);
 	}
@@ -45,14 +45,15 @@ public:
 		for (unsigned int i = 0; i < meshes.size(); i++)
 			meshes[i].Draw(shader);
 	}
-	glm::vec3 getMaxCords()	{ return maxCords; }
-	glm::vec3 getMinCords()	{ return minCords; }
+	glm::vec3 getMaxCords()	{ return glm::vec3(t[3]) + maxCords; }
+	glm::vec3 getMinCords()	{ return glm::vec3(t[3]) + minCords; }
 	void setCode(int c) { code = c; }
 	int  getCode()  { return code;  }
 	void setType(InteractType t) { interType = t; }
 	InteractType getType() { return interType; }
 
 private:
+	
 	glm::vec3 maxCords, minCords;
 	int code;
 	InteractType interType;
@@ -108,16 +109,21 @@ private:
 			Vertex vertex;
 			glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
 							  // positions
+			vector = glm::vec3(glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 0.0f) * t);
+			
 			vector.x = mesh->mVertices[i].x;
 			vector.y = mesh->mVertices[i].y;
 			vector.z = mesh->mVertices[i].z;
+			
+			glm::vec3 temp = glm::vec3(glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 0.0f) * t);
 
-			if (i == 0 || vector.x > maxCords.x){ maxCords.x = vector.x; }
-			if (i == 0 || vector.y > maxCords.y){ maxCords.y = vector.y; }
-			if (i == 0 || vector.z > maxCords.z){ maxCords.z = vector.z; }
-			if (i == 0 || vector.x < minCords.x){ minCords.x = vector.x; }
-			if (i == 0 || vector.y < minCords.y){ minCords.y = vector.y; }
-			if (i == 0 || vector.z < minCords.z){ minCords.z = vector.z; }
+			if (i == 0 || temp.x > maxCords.x){ maxCords.x = temp.x; }
+			if (i == 0 || temp.y > maxCords.y){ maxCords.y = temp.y; }
+			if (i == 0 || temp.z > maxCords.z){ maxCords.z = temp.z; }
+
+			if (i == 0 || temp.x < minCords.x){ minCords.x = temp.x; }
+			if (i == 0 || temp.y < minCords.y){ minCords.y = temp.y; }
+			if (i == 0 || temp.z < minCords.z){ minCords.z = temp.z; }
 
 			vertex.Position = vector;
 			// normals

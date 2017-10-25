@@ -143,26 +143,32 @@ public:
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	void ProcessMouseMovement(float xoffset, float yoffset, bool flag, GLboolean constrainPitch = true)
 	{
-		if (flag == false)
+		static int currYaw;
+		xoffset *= MouseSensitivity;
+		yoffset *= MouseSensitivity;
+
+		Yaw += xoffset;
+		Pitch += yoffset;
+
+		
+		// Make sure that when pitch is out of bounds, screen doesn't get flipped
+		if (constrainPitch)
 		{
-			xoffset *= MouseSensitivity;
-			yoffset *= MouseSensitivity;
-
-			Yaw += xoffset;
-			Pitch += yoffset;
-
-			// Make sure that when pitch is out of bounds, screen doesn't get flipped
-			if (constrainPitch)
-			{
-				if (Pitch > 89.0f)
-					Pitch = 89.0f;
-				if (Pitch < -89.0f)
-					Pitch = -89.0f;
-			}
-
-			// Update Front, Right and Up Vectors using the updated Eular angles
-			updateCameraVectors();
+			if (Pitch > 89.0f)
+				Pitch = 89.0f;
+			if (Pitch < -89.0f)
+				Pitch = -89.0f;
 		}
+
+		if (flag) {
+			if (Yaw > currYaw + 44.0f) { Yaw = currYaw + 44.0f; }
+			if (Yaw < currYaw - 44.0f) { Yaw = currYaw - 44.0f; }
+		}
+		else {
+			currYaw = Yaw;
+		}
+		// Update Front, Right and Up Vectors using the updated Eular angles
+		updateCameraVectors();
 	}
 
 	// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
