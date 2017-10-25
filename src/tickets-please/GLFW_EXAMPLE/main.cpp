@@ -54,6 +54,12 @@ std::map<std::string, Model, modelComp> modelMap;
 // store model transforms in a transform map!
 std::map<std::string, glm::mat4> transMap;
 
+// store lights in a struct
+struct Light {
+	glm::vec4 colour;
+	glm::vec4 position;
+};
+
 Shader selection;
 
 unsigned int loadCubemap(std::vector<std::string> faces) {
@@ -83,6 +89,7 @@ unsigned int loadCubemap(std::vector<std::string> faces) {
 }
 
 void constructScene(Shader s) {
+	//s.use();
 	for (auto it = modelMap.begin(); it != modelMap.end(); it++) {
 		if (s.ID == selection.ID) { s.setInt("code", (it->second).getCode()); }
 		s.setMat4("model", transMap[it->first]);
@@ -146,7 +153,7 @@ int main()
 	// configure global opengl state
 	// -----------------------------
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_REPLACE);
+	//glEnable(GL_REPLACE);
 
 //	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -168,7 +175,7 @@ int main()
 
 	// load models
 	// -----------
-	modelMap["train"]   = Model("../objects/MapDemo2.obj");
+	//modelMap["train"]   = Model("../objects/MapDemo2.obj");
 	modelMap["chairs1"] = Model("../objects/chairTest.obj");
 	modelMap["chairs2"] = Model("../objects/chairTest.obj");
 	modelMap["chairs3"] = Model("../objects/chairTest.obj");
@@ -236,14 +243,38 @@ int main()
 
 	unsigned char res[4] = {0,0,0,0};
 	GLint viewport[4];
+	glm::vec4 origColour = glm::vec4(0.9f, 0.95f, 1.0f, 0.95f);
+	Light lights[4];
+	int RANGE = 15;
+	for (int i = 0; i < 2; ++i) {
+		lights[i].colour   = origColour;
+	}
+	lights[0].position = glm::vec4(rand() * -RANGE, 0.0f, 3.0f, 1.0f);
+	lights[1].position = glm::vec4(rand() * -RANGE, 0.0f, 3.0f, 1.0f);
+	lights[2].position = glm::vec4(1.0f, 0.0f, 3.0f, 1.0f);
+	lights[3].position = glm::vec4(-1.0f, 0.0f, 3.0f, 1.0f);
+	int numFrames = 0;
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
+		std::cout << camera.Position[0] << ", " << camera.Position[1] << ", " << camera.Position[2] << std::endl;
+		numFrames++;
 		// per-frame time logic
 		// --------------------
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
+		//if (numFrames % 20 == 0) {
+			for (int i = 0; i < 2; ++i) {
+				if (lights[i].position.x >= -RANGE) {
+					lights[i].position.x -= 0.09f;
+				}
+				else {
+					lights[i].position.x = RANGE;
+				}
+				lights[i].colour = origColour;
+			}
+		//}
 		lastFrame = currentFrame;
 
 		// input
@@ -255,8 +286,23 @@ int main()
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		ourShader.use();
+		//glm::vec4 light_pos = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
+		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_position[0]"),	1, glm::value_ptr(lights[0].position));
+		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_position[1]"),	1, glm::value_ptr(lights[1].position));
+		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_position[2]"),	1, glm::value_ptr(lights[2].position));
+		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_position[3]"),	1, glm::value_ptr(lights[3].position));
+		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_colour[0]"),		1, glm::value_ptr(lights[0].colour));
+		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_colour[1]"),		1, glm::value_ptr(lights[1].colour));
+		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_colour[2]"),		1, glm::value_ptr(lights[2].colour));
+		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_colour[3]"),		1, glm::value_ptr(lights[3].colour));
+		/*
+		ourShader.setVec4("light_position", lights[0].position);
+		ourShader.setVec4("light_position", lights[1].position);
+		ourShader.setVec4("light_colour", lights[0].colour);
+		ourShader.setVec4("light_colour", lights[1].colour);
+		*/
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
 
@@ -275,7 +321,7 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // set depth function back to default
-/**/
+/**/	
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		//glGetIntegerv(GL_VIEWPORT, viewport);
