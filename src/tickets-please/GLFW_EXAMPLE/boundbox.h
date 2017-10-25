@@ -11,6 +11,7 @@ using namespace std;
 class BoundBox
 {
 public:
+	BoundBox() {}
 	BoundBox(glm::vec3 maxCords, glm::vec3 minCords)
 	{
 		xdist = maxCords.x-minCords.x;
