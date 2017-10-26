@@ -525,7 +525,6 @@ int main()
 		if (flag == true)
 		{
 			glm::vec3 toPerson = glm::vec3(modelMap[focusPerson].transform[3]) - camera.Position;
-			std::cout << glm::distance(camera.Position, glm::vec3(modelMap[focusPerson].transform[3])) << std::endl;
 			if (glm::distance(camera.Position, glm::vec3(modelMap[focusPerson].transform[3])) > 4) {
 				camera.Position = glm::vec3(modelMap[focusPerson].transform[3]) - glm::vec3(0.99 * toPerson.x, 0.99 * toPerson.y, 0.99 * toPerson.z);
 			}
@@ -581,7 +580,6 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS && flag) {
 		std::string idStr = modelMap[modelMap[focusPerson].linkedID].idName;
 		std::string ticketStr = modelMap[modelMap[focusPerson].linkedTicket].ticketName;
-		std::cout << "id: [" << idStr << "] ticket: [" << ticketStr << "]" << std::endl;
 		
 		if (idStr.substr(6, 9) == "_inv" || ticketStr.substr(6, 9) == "_inv"
 			|| (idStr.substr(0, 6) != ticketStr.substr(0, 6))) {

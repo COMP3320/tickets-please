@@ -21,7 +21,7 @@ void main(){
     current = mat3(view) * current;
 
         // get previous screen space position:
-    vec4 previous = previousView * vec4(1.0, 1.0, -1.0, 1.0);
+    vec4 previous = previousView * vec4(0.5, 0.5, -0.5, 1.0);
     previous.xyz /= previous.w;
     previous.xy = previous.xy * 0.5 + 0.5;
 
@@ -40,7 +40,7 @@ void main(){
 
     result /= float(nSamples);
 
-    FragColour = texture(screenTexture0, TexCoords) + 0.9 * result;
+    FragColour = 0.9 * texture(screenTexture0, TexCoords) + 0.35 * result;
     /*
         0.1 * vec4(vec3(texture(screenTexture0, TexCoords)), 0.01) +
         0.1 * vec4(vec3(texture(screenTexture1, TexCoords)), 0.01) +
