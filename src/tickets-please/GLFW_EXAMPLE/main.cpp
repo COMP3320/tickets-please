@@ -349,7 +349,7 @@ int main()
 	can_mat = glm::translate(IDMat, glm::vec3(0.0f, 100.0f, -10.0f));
 
 	// Text 2D
-	Text2D textRenderer = Text2D("text2d-font.dds");
+	//Text2D textRenderer = Text2D("text2d-font.dds");
 
 	// render loop
 	// -----------
@@ -442,9 +442,9 @@ int main()
 		glDepthFunc(GL_LESS); // set depth function back to default
 
 		// Draw text on the screen
-		char text[256];
-		sprintf(text, "%.2f sec", glfwGetTime());
-		textRenderer.print(text, SCR_WIDTH / 2, SCR_HEIGHT / 2, 60);
+		//char text[256];
+		//sprintf(text, "%.2f sec", glfwGetTime());
+		//textRenderer.print(text, SCR_WIDTH / 2, SCR_HEIGHT / 2, 60);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
