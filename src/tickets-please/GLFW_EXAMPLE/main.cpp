@@ -74,7 +74,7 @@ Shader selection;
 bool enableDepthOfField = false;
 bool enableMotionBlur = false;
 
-int maximumMotionBlurFrames = 100;
+int maximumMotionBlurFrames = 80;
 
 /*
  *	TEST GLOBALS FOR PERSON INTERACTION
