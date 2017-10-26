@@ -48,6 +48,8 @@ float reposx, reposy;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+int score = 0;
+
 // store models in a model map!
 struct modelContainer {
 	Model model;
@@ -56,6 +58,7 @@ struct modelContainer {
 	InteractType type = NONE;
 	int code;
 	std::string linkedID, linkedTicket;
+	std::string idName, ticketName;
 };
 std::map<std::string, modelContainer> modelMap;
 std::string focusPerson;
@@ -135,6 +138,7 @@ void constructScene(Shader s) {
 
 int main()
 {
+	srand(time(0));
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
@@ -279,10 +283,42 @@ int main()
 	//	modelMap["chairs4"].model = Model("../objects/chairTest.obj", chairs4_mat);
 	modelMap["person1"].model = Model("../objects/person/person.obj", person1_mat);
 	modelMap["person2"].model = Model("../objects/person/person.obj", person2_mat);
-	modelMap["ticket1"].model = Model("../objects/ticket/Ticket.obj", ticket1_mat);
-	modelMap["ticket2"].model = Model("../objects/ticket/Ticket.obj", ticket2_mat);
-	modelMap["id1"].model = Model("../objects/id/ID.obj", id1_mat);
-	modelMap["id2"].model = Model("../objects/id/ID.obj", id2_mat);
+
+	std::string docNames[] = {
+		"junior_invalid",
+		"junior_valid",
+		"normal_invalid",
+		"normal_valid",
+		"senior_invalid",
+		"senior_valid"
+	};
+	
+	int ticketNum = rand() % 6;
+	int idNum = 0;
+
+	int reroll = rand();
+
+	std::cout << ticketNum << ", " << idNum << std::endl;
+	modelMap["ticket1"].model = Model(std::string("../objects/ticket/" + docNames[ticketNum] + ".obj"), ticket1_mat);
+	modelMap["ticket1"].ticketName = docNames[ticketNum];
+	if (reroll < 0.4) { idNum = int(rand() % 7); }
+	else { idNum = ticketNum; }
+	modelMap["id1"].model = Model(std::string("../objects/id/" + docNames[idNum] + ".obj"), id1_mat);
+	modelMap["id1"].idName = docNames[idNum];
+
+	std::cout << docNames[ticketNum] << ", " << docNames[idNum] << std::endl;
+
+	ticketNum = rand() % 6;
+	reroll = rand();
+	modelMap["ticket2"].model = Model(std::string("../objects/ticket/" + docNames[ticketNum] + ".obj"), ticket2_mat);
+	modelMap["ticket2"].ticketName = docNames[ticketNum];
+	if (reroll < 0.4) { idNum = int(rand() % 7); }
+	else { idNum = ticketNum; }
+	modelMap["id2"].model = Model("../objects/id/" + docNames[idNum] + ".obj", id2_mat);
+	modelMap["id2"].idName = docNames[idNum];
+
+	std::cout << docNames[ticketNum] << ", " << docNames[idNum] << std::endl;
+
 	modelMap["can"].model = Model("../objects/can.obj", can_mat);
 	
 
@@ -491,11 +527,38 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 	int speed = 1;
 
 	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS && flag) {
+		std::string idStr = modelMap[modelMap[focusPerson].linkedID].idName;
+		std::string ticketStr = modelMap[modelMap[focusPerson].linkedTicket].ticketName;
+		std::cout << "id: [" << idStr << "] ticket: [" << ticketStr << "]" << std::endl;
+		
+		if (idStr.substr(6, 9) == "_inv" || ticketStr.substr(6, 9) == "_inv"
+			|| (idStr.substr(0, 6) != ticketStr.substr(0, 6))) {
+			score--;
+			std::cout << "Score (-1): " << score << std::endl;
+		}
+		else {
+			score++;
+			std::cout << "Score (+1): " << score << std::endl;
+		}
+		
 		modelMap[modelMap[focusPerson].linkedID].rendered = false;
 		modelMap[modelMap[focusPerson].linkedTicket].rendered = false;
 		flag = false;
 	}
 	if (glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS && flag) {
+		std::string idStr = modelMap[modelMap[focusPerson].linkedID].idName;
+		std::string ticketStr = modelMap[modelMap[focusPerson].linkedTicket].ticketName;
+		
+		if (idStr.substr(6, 9) == "_val" || ticketStr.substr(6, 9) == "_val"
+			|| (idStr.substr(0, 6) != ticketStr.substr(0, 6))) {
+			score--;
+			std::cout << "Score (-1): " << score << std::endl;
+		}
+		else {
+			score++;
+			std::cout << "Score (+1): " << score << std::endl;
+		}
+		
 		modelMap[focusPerson].rendered = false;
 		modelMap[modelMap[focusPerson].linkedID].rendered = false;
 		modelMap[modelMap[focusPerson].linkedTicket].rendered = false;
@@ -545,7 +608,7 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 			glGetIntegerv(GL_VIEWPORT, viewport);
 			glReadPixels(SCR_WIDTH / 2, SCR_HEIGHT / 2, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &res);
 
-			std::cout << (int)res[0] << std::endl;
+			//std::cout << (int)res[0] << std::endl;
 			std::string modelStr;
 			for (auto it = modelMap.begin(); it != modelMap.end(); it++) {
 				if ((it->second).code == *res) {
@@ -590,7 +653,7 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 			flag = false;
 			modelMap[modelMap[focusPerson].linkedID].rendered = false;
 			modelMap[modelMap[focusPerson].linkedTicket].rendered = false;
-			focusPerson = "";
+			//focusPerson = "";
 		}
 
 	}
@@ -635,16 +698,16 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	currX = xpos;
 	currY = ypos;
-
+	int xRepos = 0.1, yRepos = 0.5;
 	if (moveFlag == true)
 	{
 		if (currX > lastX)
 		{
-			reposx = 0.05;
+			reposx = xRepos;
 		}
 		else if (currX < lastX)
 		{
-			reposx = -0.05;
+			reposx = -xRepos;
 		}
 		else
 		{
@@ -653,11 +716,11 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 		if (currY > lastY)
 		{
-			reposy = -0.025;
+			reposy = -yRepos;
 		}
 		else if (currY < lastY)
 		{
-			reposy = 0.025;
+			reposy = yRepos;
 		}
 		else
 		{

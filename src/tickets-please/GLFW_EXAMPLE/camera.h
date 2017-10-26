@@ -142,7 +142,7 @@ public:
 			isSitting = false; 
 			Position[1] = 0.0f;
 		}
-		std::cout << (boundCheck && areaCheck) << std::endl;
+		//std::cout << (boundCheck && areaCheck) << std::endl;
 		return boundCheck && areaCheck;
 	}
 
