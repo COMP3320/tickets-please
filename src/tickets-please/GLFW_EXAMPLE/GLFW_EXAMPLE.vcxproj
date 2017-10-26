@@ -138,6 +138,8 @@
     <None Include="..\objects\Train.mtl" />
     <None Include="depth-of-field.frag" />
     <None Include="depth-of-field.vert" />
+    <None Include="god-rays.frag" />
+    <None Include="god-rays.vert" />
     <None Include="grayscale.frag" />
     <None Include="grayscale.vert" />
     <None Include="inversion.frag" />
@@ -157,6 +159,7 @@
     <ClInclude Include="boundbox.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="cubemapVert.h" />
+    <ClInclude Include="godRays.h" />
     <ClInclude Include="grayscale.h" />
     <ClInclude Include="interactable.h" />
     <ClInclude Include="inversion.h" />
