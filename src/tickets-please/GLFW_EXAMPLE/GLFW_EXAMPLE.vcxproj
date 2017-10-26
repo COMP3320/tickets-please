@@ -136,6 +136,8 @@
     <None Include="..\objects\Train.mtl" />
     <None Include="depth-of-field.frag" />
     <None Include="depth-of-field.vert" />
+    <None Include="motion-blur.frag" />
+    <None Include="motion-blur.vert" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
     <None Include="selection.frag" />
@@ -148,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="boundbox.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="cubemapVert.h" />
     <ClInclude Include="interactable.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />

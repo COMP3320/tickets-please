@@ -193,6 +193,12 @@
     <None Include="depth-of-field.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="motion-blur.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="motion-blur.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -217,6 +223,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="text2d.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cubemapVert.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
