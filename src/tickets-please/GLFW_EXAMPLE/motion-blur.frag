@@ -40,14 +40,13 @@ void main(){
  
 	result /= float(nSamples);
 
-	FragColour = 0.8 * result;
-	//+
-		//0.1 * vec4(vec3(texture(screenTexture0, TexCoords)), 0.01) +
-		//0.1 * vec4(vec3(texture(screenTexture1, TexCoords)), 0.01) +
-		//0.1 * vec4(vec3(texture(screenTexture2, TexCoords)), 0.01) +
-		//0.1 * vec4(vec3(texture(screenTexture3, TexCoords)), 0.01) +
-		//0.1 * vec4(vec3(texture(screenTexture4, TexCoords)), 0.01) +
-		//0.1 * vec4(vec3(texture(screenTexture5, TexCoords)), 0.01) +
-		//0.1 * vec4(vec3(texture(screenTexture6, TexCoords)), 0.01) +
-		//0.1 * vec4(vec3(texture(screenTexture7, TexCoords)), 0.01);
+	FragColour = 0.8 * result +
+		0.1 * vec4(vec3(texture(screenTexture0, TexCoords)), 0.01) +
+		0.1 * vec4(vec3(texture(screenTexture1, TexCoords)), 0.01) +
+		0.1 * vec4(vec3(texture(screenTexture2, TexCoords)), 0.01) +
+		0.1 * vec4(vec3(texture(screenTexture3, TexCoords)), 0.01) +
+		0.1 * vec4(vec3(texture(screenTexture4, TexCoords)), 0.01) +
+		0.1 * vec4(vec3(texture(screenTexture5, TexCoords)), 0.01) +
+		0.1 * vec4(vec3(texture(screenTexture6, TexCoords)), 0.01) +
+		0.1 * vec4(vec3(texture(screenTexture7, TexCoords)), 0.01);
 }
