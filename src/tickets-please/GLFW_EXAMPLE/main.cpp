@@ -16,6 +16,7 @@
 #include "cubemapVert.h"
 #include "boundbox.h"
 #include "pickRay.h"
+#include "text2d.h"
 
 #include <stdio.h>  
 #include <stdlib.h> 
@@ -132,6 +133,7 @@ int main()
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
+	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -324,6 +326,7 @@ int main()
 
 	unsigned char res[4] = {0,0,0,0};
 	GLint viewport[4];
+	
 	glm::vec4 origColour = glm::vec4(0.9f, 0.95f, 1.0f, 0.95f);
 	Light lights[4];
 	int RANGE = 15;
@@ -344,6 +347,10 @@ int main()
 	glm::vec3 position(0, height, -10.f);
 	glm::mat4 IDMat;
 	can_mat = glm::translate(IDMat, glm::vec3(0.0f, 100.0f, -10.0f));
+
+	// Text 2D
+	Text2D textRenderer = Text2D("text2d-font.dds");
+
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -434,9 +441,14 @@ int main()
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // set depth function back to default
 
+		// Draw text on the screen
+		char text[256];
+		sprintf(text, "%.2f sec", glfwGetTime());
+		textRenderer.print(text, SCR_WIDTH / 2, SCR_HEIGHT / 2, 60);
+
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
-
+		
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}

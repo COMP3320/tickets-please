@@ -119,6 +119,7 @@
     <Image Include="leg_dif.png" />
     <Image Include="leg_showroom_ddn.png" />
     <Image Include="leg_showroom_spec.png" />
+    <Image Include="text2d-font.dds" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\objects\basicmap.mtl" />
@@ -139,6 +140,8 @@
     <None Include="selection.vert" />
     <None Include="shader.frag" />
     <None Include="shader.vert" />
+    <None Include="text2d.frag" />
+    <None Include="text2d.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boundbox.h" />
@@ -148,6 +151,7 @@
     <ClInclude Include="model.h" />
     <ClInclude Include="pickRay.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="text2d.h" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="..\objects\basicmap.obj">
