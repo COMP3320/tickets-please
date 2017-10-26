@@ -18,6 +18,7 @@
 #include "pickRay.h"
 #include "text2d.h"
 #include "motionBlur.h"
+#include "godRays.h"
 #include "grayscale.h"
 #include "inversion.h"
 #include "keys.h"
@@ -81,6 +82,7 @@ Shader selection;
 bool enableDepthOfField = false;
 
 MotionBlur* motionBlur;
+GodRays* godRays;
 Grayscale* grayscale;
 Inversion* inversion;
 
@@ -419,10 +421,13 @@ int main()
 	// Text 2D
 	//Text2D textRenderer = Text2D("text2d-font.dds");
 
-	// Motion blur
+	// Effects
 
 	motionBlur = new MotionBlur(SCR_WIDTH, SCR_HEIGHT, false);
 	motionBlur->setup();
+
+	godRays = new GodRays(SCR_WIDTH, SCR_HEIGHT, false);
+	godRays->setup();
 
 	grayscale = new Grayscale(SCR_WIDTH, SCR_HEIGHT, false);
 	grayscale->setup();
@@ -438,10 +443,10 @@ int main()
 		GLFW_KEY_S,
 		GLFW_KEY_A,
 		GLFW_KEY_D,
-		GLFW_KEY_I,
-		GLFW_KEY_F,
-		GLFW_KEY_M,
-		GLFW_KEY_G,
+		GLFW_KEY_F1,
+		GLFW_KEY_F2,
+		GLFW_KEY_F3,
+		GLFW_KEY_F4,
 	});
 
 	Keys keys = Keys(window, interestingKeys);
@@ -526,7 +531,6 @@ int main()
 		if (flag == true)
 		{
 			glm::vec3 toPerson = glm::vec3(modelMap[focusPerson].transform[3]) - camera.Position;
-			std::cout << glm::distance(camera.Position, glm::vec3(modelMap[focusPerson].transform[3])) << std::endl;
 			if (glm::distance(camera.Position, glm::vec3(modelMap[focusPerson].transform[3])) > 4) {
 				camera.Position = glm::vec3(modelMap[focusPerson].transform[3]) - glm::vec3(0.99 * toPerson.x, 0.99 * toPerson.y, 0.99 * toPerson.z);
 			}
@@ -550,6 +554,7 @@ int main()
 		glDepthFunc(GL_LESS); // set depth function back to default
 
 		motionBlur->render(view, projection);
+		godRays->render(view, projection);
 		grayscale->render(view, projection);
 		inversion->render(view, projection);
 
@@ -581,7 +586,6 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS && flag) {
 		std::string idStr = modelMap[modelMap[focusPerson].linkedID].idName;
 		std::string ticketStr = modelMap[modelMap[focusPerson].linkedTicket].ticketName;
-		std::cout << "id: [" << idStr << "] ticket: [" << ticketStr << "]" << std::endl;
 		
 		if (idStr.substr(6, 9) == "_inv" || ticketStr.substr(6, 9) == "_inv"
 			|| (idStr.substr(0, 6) != ticketStr.substr(0, 6))) {
@@ -620,20 +624,24 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 
 	// Effects
 
-	if (keys.isJustPressed(GLFW_KEY_F)) {
-		enableDepthOfField = enableDepthOfField;
-	}
-
-	if (keys.isJustPressed(GLFW_KEY_M)) {
+	if (keys.isJustPressed(GLFW_KEY_F1)) {
 		motionBlur->toggle();
+		std::cout << "Motion blur toggled." << std::endl;
 	}
 
-	if (keys.isJustPressed(GLFW_KEY_G)) {
+	if (keys.isJustPressed(GLFW_KEY_F2)) {
+		godRays->toggle();
+		std::cout << "God rays toggled." << std::endl;
+	}
+
+	if (keys.isJustPressed(GLFW_KEY_F3)) {
 		grayscale->toggle();
+		std::cout << "Grayscale toggled." << std::endl;
 	}
 
-	if (keys.isJustPressed(GLFW_KEY_I)) {
+	if (keys.isJustPressed(GLFW_KEY_F4)) {
 		inversion->toggle();
+		std::cout << "Colour inversion toggled." << std::endl;
 	}
 
 	// Movement
