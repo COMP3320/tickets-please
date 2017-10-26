@@ -25,7 +25,7 @@ const float SPEED = 2.5f;
 const float SENSITIVTY = 0.05f;
 const float ZOOM = 45.0f;
 
-
+glm::vec3 front;
 // An abstract camera class that processes input and calculates the corresponding Eular Angles, Vectors and Matrices for use in OpenGL
 class Camera
 {
@@ -195,7 +195,7 @@ public:
 	void updateCameraVectors()
 	{
 		// Calculate the new Front vector
-		glm::vec3 front;
+		
 		front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 		front.y = sin(glm::radians(Pitch));
 		front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));

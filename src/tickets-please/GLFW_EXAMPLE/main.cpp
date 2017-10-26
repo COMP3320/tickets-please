@@ -775,9 +775,10 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	{
 		yupdate = reposy;
 		glm::mat4 camMove = modelMap[moveModel].transform;
+
 		camMove = glm::translate(camMove, glm::vec3(reposx, reposy, 0));
-		canx = reposx;
-		cany = reposy;
+		canx += reposx/10;
+		cany += reposy/10;
 		modelMap[moveModel].transform = camMove;
 		modelMap[moveModel].model.t = camMove;	//not sure what t is
 		reposx = 0;
