@@ -12,7 +12,7 @@ uniform sampler2D screenTexture0,
 				  screenTexture6,
 				  screenTexture7;
 
-uniform mat4 view, proj;
+uniform mat4 view, proj, previousView;
 
 void main(){
 	// get current world space position:
@@ -21,7 +21,7 @@ void main(){
 	current = mat3(view) * current;
  
 		// get previous screen space position:
-	vec4 previous = proj * vec4(current, 1.0);
+	vec4 previous = previousView * vec4(current, 1.0);
 	previous.xyz /= previous.w;
 	previous.xy = previous.xy * 0.5 + 0.5;
 
@@ -40,13 +40,14 @@ void main(){
  
 	result /= float(nSamples);
 
-	FragColour = 0.8 * result +
-		0.1 * vec4(vec3(texture(screenTexture0, TexCoords)), 0.01) +
-		0.1 * vec4(vec3(texture(screenTexture1, TexCoords)), 0.01) +
-		0.1 * vec4(vec3(texture(screenTexture2, TexCoords)), 0.01) +
-		0.1 * vec4(vec3(texture(screenTexture3, TexCoords)), 0.01) +
-		0.1 * vec4(vec3(texture(screenTexture4, TexCoords)), 0.01) +
-		0.1 * vec4(vec3(texture(screenTexture5, TexCoords)), 0.01) +
-		0.1 * vec4(vec3(texture(screenTexture6, TexCoords)), 0.01) +
-		0.1 * vec4(vec3(texture(screenTexture7, TexCoords)), 0.01);
+	FragColour = 0.8 * result;
+	//+
+		//0.1 * vec4(vec3(texture(screenTexture0, TexCoords)), 0.01) +
+		//0.1 * vec4(vec3(texture(screenTexture1, TexCoords)), 0.01) +
+		//0.1 * vec4(vec3(texture(screenTexture2, TexCoords)), 0.01) +
+		//0.1 * vec4(vec3(texture(screenTexture3, TexCoords)), 0.01) +
+		//0.1 * vec4(vec3(texture(screenTexture4, TexCoords)), 0.01) +
+		//0.1 * vec4(vec3(texture(screenTexture5, TexCoords)), 0.01) +
+		//0.1 * vec4(vec3(texture(screenTexture6, TexCoords)), 0.01) +
+		//0.1 * vec4(vec3(texture(screenTexture7, TexCoords)), 0.01);
 }
