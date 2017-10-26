@@ -17,6 +17,9 @@
 #include "boundbox.h"
 #include "pickRay.h"
 #include "text2d.h"
+#include "motionBlur.h"
+#include "grayscale.h"
+#include "inversion.h"
 
 #include <stdio.h>  
 #include <stdlib.h> 
@@ -75,9 +78,10 @@ struct Light {
 Shader selection;
 
 bool enableDepthOfField = false;
-bool enableMotionBlur = false;
 
-int maximumMotionBlurFrames = 80;
+MotionBlur* motionBlur;
+Grayscale* grayscale;
+Inversion* inversion;
 
 /*
  *	TEST GLOBALS FOR PERSON INTERACTION
@@ -400,71 +404,14 @@ int main()
 
 	// Motion blur
 
-	Shader motionBlurShader("motion-blur.vert", "motion-blur.frag");
+	motionBlur = new MotionBlur(SCR_WIDTH, SCR_HEIGHT, false);
+	motionBlur->setup();
 
-	// Process quad VAO/VBO
-	unsigned int quadVAO, quadVBO;
-	glGenVertexArrays(1, &quadVAO);
-	glGenBuffers(1, &quadVBO);
-	glBindVertexArray(quadVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	grayscale = new Grayscale(SCR_WIDTH, SCR_HEIGHT, false);
+	grayscale->setup();
 
-	// Configure frame buffer
-	unsigned int fbo;
-	glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-	// Multisampling!
-	// 1. Configure multisample framebuffer
-	unsigned int framebuffer;
-	glGenTextures(1, &framebuffer);
-	glBindTexture(GL_FRAMEBUFFER, framebuffer);
-
-	// 2. Create multisampled colour attachment tex
-	int MS_SIZE = 8;
-	unsigned int texColBuffMS;
-	glGenTextures(1, &texColBuffMS);
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texColBuffMS);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, MS_SIZE, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
-	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texColBuffMS, 0);
-
-	// 3. Create render buffer for depth & stencil
-	unsigned int rbo;
-	glGenRenderbuffers(1, &rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, MS_SIZE, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-		std::cout << "ERROR: Framebuffer is not complete!" << std::endl;
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// 4. Create intermediate framebuffer
-	unsigned int intermediateFBO;
-	glGenFramebuffers(1, &intermediateFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, intermediateFBO);
-
-	// Current frame buffer
-	unsigned int texColorBuffer;
-	glGenTextures(1, &texColorBuffer);
-	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
-	glm::mat4 prevView;
-
-	if (enableMotionBlur == false) {
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
+	inversion = new Inversion(SCR_WIDTH, SCR_HEIGHT, false);
+	inversion->setup();
 	
 	// render loop
 	// -----------
@@ -563,33 +510,14 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // set depth function back to default
-		
-		if (enableMotionBlur) {
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFBO);
-			glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-			// Now back to default framebuffer and draw our quad
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			glDisable(GL_DEPTH_TEST);
-
-			motionBlurShader.use();
-			motionBlurShader.setMat4("view", view);
-			motionBlurShader.setMat4("proj", projection);
-
-			glBindVertexArray(quadVAO);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-			glEnable(GL_DEPTH_TEST);
-		}
+		motionBlur->render(view, projection);
+		grayscale->render(view, projection);
+		inversion->render(view, projection);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 
-		prevView = view;
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -655,9 +583,19 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 		enableDepthOfField = false;
 
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-		enableMotionBlur = true;
+		motionBlur->enable();
 	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE)
-		enableMotionBlur = false;
+		motionBlur->disable();
+
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+		grayscale->enable();
+	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE)
+		grayscale->disable();
+
+	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+		inversion->enable();
+	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE)
+		inversion->disable();
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);

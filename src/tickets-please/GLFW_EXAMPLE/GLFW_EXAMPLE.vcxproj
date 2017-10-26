@@ -136,6 +136,10 @@
     <None Include="..\objects\Train.mtl" />
     <None Include="depth-of-field.frag" />
     <None Include="depth-of-field.vert" />
+    <None Include="grayscale.frag" />
+    <None Include="grayscale.vert" />
+    <None Include="inversion.frag" />
+    <None Include="inversion.vert" />
     <None Include="motion-blur.frag" />
     <None Include="motion-blur.vert" />
     <None Include="nanosuit.blend" />
@@ -151,9 +155,12 @@
     <ClInclude Include="boundbox.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="cubemapVert.h" />
+    <ClInclude Include="grayscale.h" />
     <ClInclude Include="interactable.h" />
+    <ClInclude Include="inversion.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="motionBlur.h" />
     <ClInclude Include="pickRay.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="text2d.h" />

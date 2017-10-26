@@ -199,6 +199,18 @@
     <None Include="motion-blur.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="grayscale.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="grayscale.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="inversion.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="inversion.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -226,6 +238,15 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="cubemapVert.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="grayscale.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inversion.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="motionBlur.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
