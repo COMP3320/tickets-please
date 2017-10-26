@@ -580,8 +580,8 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS && flag) {
 		std::string idStr = modelMap[modelMap[focusPerson].linkedID].idName;
 		std::string ticketStr = modelMap[modelMap[focusPerson].linkedTicket].ticketName;
-		
-		if (idStr.substr(6, 9) == "_inv" || ticketStr.substr(6, 9) == "_inv"
+		std::cout << idStr.substr(6, 9) << std::endl;
+		if (idStr.substr(6, 9) == "_inval" || ticketStr.substr(6, 9) == "_inval"
 			|| (idStr.substr(0, 6) != ticketStr.substr(0, 6))) {
 			score--;
 			std::cout << "Score (-1): " << score << std::endl;
@@ -600,7 +600,7 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 		std::string idStr = modelMap[modelMap[focusPerson].linkedID].idName;
 		std::string ticketStr = modelMap[modelMap[focusPerson].linkedTicket].ticketName;
 		
-		if (idStr.substr(6, 9) == "_val" || ticketStr.substr(6, 9) == "_val"
+		if (idStr.substr(6, 9) == "_valid" || ticketStr.substr(6, 9) == "_valid"
 			|| (idStr.substr(0, 6) != ticketStr.substr(0, 6))) {
 			score--;
 			std::cout << "Score (-1): " << score << std::endl;
