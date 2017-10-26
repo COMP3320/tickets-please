@@ -131,6 +131,7 @@
     <None Include="..\objects\Map.mtl" />
     <None Include="..\objects\map2.mtl" />
     <None Include="..\objects\MapDemo2.mtl" />
+    <None Include="..\objects\MapDemo3.mtl" />
     <None Include="..\objects\mapend.mtl" />
     <None Include="..\objects\person.mtl" />
     <None Include="..\objects\Ticket.mtl" />
@@ -190,6 +191,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\objects\MapDemo2.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Object>
+    <Object Include="..\objects\MapDemo3.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Object>
     <Object Include="..\objects\mapend.obj">

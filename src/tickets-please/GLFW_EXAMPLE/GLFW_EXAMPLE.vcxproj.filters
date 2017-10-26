@@ -214,6 +214,9 @@
     <None Include="inversion.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\objects\MapDemo3.mtl">
+      <Filter>Resource Files\objects</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -294,6 +297,9 @@
       <Filter>Resource Files\objects</Filter>
     </Object>
     <Object Include="..\objects\Can.obj">
+      <Filter>Resource Files\objects</Filter>
+    </Object>
+    <Object Include="..\objects\MapDemo3.obj">
       <Filter>Resource Files\objects</Filter>
     </Object>
   </ItemGroup>

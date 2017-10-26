@@ -284,9 +284,15 @@ int main()
 	can_mat = glm::translate(can_mat, glm::vec3(0.0f, -2.0f, -7.0f));
 	can_mat = glm::scale(can_mat, glm::vec3(0.1f, 0.1f, 0.1f));
 	modelMap["can"].transform = can_mat;
+
 	canx = 0.0f;
 	cany = -2.0f;
 	canz = -7.0f;
+
+	glm::mat4 map_mat;
+	map_mat = glm::translate(map_mat, glm::vec3(0.0f, -1.0f, -4.5f));
+	modelMap["train"].transform = map_mat;
+
 	// load models
 	// -----------
 //	modelMap["chairs1"].model = Model("../objects/chairTest.obj", chairs1_mat);
@@ -328,7 +334,8 @@ int main()
 	modelMap["id2"].idName = docNames[idNum];
 
 	modelMap["can"].model = Model("../objects/can.obj", can_mat);
-	
+
+	modelMap["train"].model = Model("../objects/MapDemo3.obj", map_mat);
 
 //	Model can("../objects/can.obj", can_mat);
 	//BoundBox bb[10];
@@ -488,8 +495,8 @@ int main()
 		{
 		//	std::cout << position.y << std::endl;
 
-			cany -= (velocity*deltaTime) + (0.5*1.8*deltaTime*deltaTime);
-			velocity += (1.8*deltaTime);
+			cany -= (velocity*deltaTime) + (0.5*9.8*deltaTime*deltaTime);
+			velocity += (9.8*deltaTime);
 
 			glm::mat4 camMove;// = modelMap[moveModel].transform;
 
