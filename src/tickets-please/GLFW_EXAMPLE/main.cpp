@@ -133,23 +133,6 @@ void constructScene(Shader s) {
 	}
 }
 
-void frustum_depthoffield(GLdouble left, GLdouble right,
-	GLdouble bottom, GLdouble top,
-	GLdouble near, GLdouble far,
-	GLdouble xoff, GLdouble yoff,
-	GLdouble focus)
-{
-	glFrustum(left - xoff * near / focus,
-		right - xoff * near / focus,
-		top - yoff * near / focus,
-		bottom - yoff * near / focus,
-		near, far);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glTranslatef(-xoff, -yoff, 0);
-}
-
 int main()
 {
 	// glfw: initialize and configure
@@ -372,9 +355,7 @@ int main()
 
 	// Text 2D
 	//Text2D textRenderer = Text2D("text2d-font.dds");
-
-	glEnable(GL_ACCUM);
-
+	
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -405,9 +386,11 @@ int main()
 		// render
 		// ------
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
+
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_position[0]"), 1, glm::value_ptr(lights[0].position));
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_position[1]"), 1, glm::value_ptr(lights[1].position));
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_position[2]"), 1, glm::value_ptr(lights[2].position));
@@ -417,54 +400,11 @@ int main()
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_colour[2]"), 1, glm::value_ptr(lights[2].colour));
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_colour[3]"), 1, glm::value_ptr(lights[3].colour));
 
-		if (enableDepthOfField) {
-			glClear(GL_ACCUM_BUFFER_BIT);
+		ourShader.use();
+		ourShader.setMat4("projection", projection);
+		ourShader.setMat4("view", view);
 
-			ourShader.use();
-			GLint uniform_mvp = glGetUniformLocation(ourShader.ID, "MVP");
-
-			vec3 object = camera.Position + camera.Front;
-			vec3 eye = camera.Position;
-			vec3 up = camera.Up;
-
-			int n = 10; // number of light rays
-			float aperture = 0.05;
-
-			glm::vec3 right = glm::normalize(glm::cross(object - eye, up));
-			glm::vec3 p_up = glm::normalize(glm::cross(object - eye, right));
-
-			for (int i = 0; i < n; i++) {
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				glm::vec3 bokeh = right * cosf(i * 2 * 3.14f / n) + p_up * sinf(i * 2 * 3.14f / n);
-				//std::cout << i << " " << bokeh.x << "," << bokeh.y << "," << bokeh.z << "" << std::endl;
-
-				glm::mat4 modelview = glm::lookAt(eye + aperture * bokeh, object, p_up);
-				glm::mat4 mvp = projection * modelview;
-
-				//glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
-
-				ourShader.use();
-				ourShader.setMat4("projection", projection);
-				ourShader.setMat4("view", mvp);
-
-				constructScene(ourShader);
-
-				glAccum(i ? GL_ACCUM : GL_LOAD, 1.0f / n);
-			}
-
-			glAccum(GL_RETURN, 1);
-		}
-
-		else
-		{
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			ourShader.use();
-			ourShader.setMat4("projection", projection);
-			ourShader.setMat4("view", view);
-
-			constructScene(ourShader);
-		}
+		constructScene(ourShader);
 
 		//GRAVITY TESTING CODE
 
@@ -516,15 +456,7 @@ int main()
 		// -------------------------------------------------------------------------------
 
 		if (enableMotionBlur) {
-			if ((numFrames % maximumMotionBlurFrames) == 0)
-				glAccum(GL_LOAD, 1.0 / maximumMotionBlurFrames);
-			else
-				glAccum(GL_ACCUM, 1.0 / maximumMotionBlurFrames);
-
-			if ((numFrames % maximumMotionBlurFrames) == (maximumMotionBlurFrames - 1)) {
-				glAccum(GL_RETURN, 1.0f);
-				glfwSwapBuffers(window);
-			}
+			glfwSwapBuffers(window);
 		}
 
 		else
