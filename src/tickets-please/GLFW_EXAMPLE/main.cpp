@@ -267,6 +267,10 @@ int main()
 	id2_mat = glm::translate(id2_mat, glm::vec3(45.0f, 0.0f, 42.5f));
 	modelMap["id2"].transform = id2_mat;
 
+	glm::mat4 can_mat;
+	can_mat = glm::translate(can_mat, glm::vec3(0.0f, -2.0f, -7.0f));
+	can_mat = glm::scale(can_mat, glm::vec3(0.1f, 0.1f, 0.1f));
+	modelMap["can"].transform = can_mat;
 	// load models
 	// -----------
 //	modelMap["chairs1"].model = Model("../objects/chairTest.obj", chairs1_mat);
@@ -279,11 +283,10 @@ int main()
 	modelMap["ticket2"].model = Model("../objects/ticket/Ticket.obj", ticket2_mat);
 	modelMap["id1"].model = Model("../objects/id/ID.obj", id1_mat);
 	modelMap["id2"].model = Model("../objects/id/ID.obj", id2_mat);
+	modelMap["can"].model = Model("../objects/can.obj", can_mat);
+	
 
-	glm::mat4 can_mat;
-
-	Model can("../objects/can.obj", can_mat);
-
+//	Model can("../objects/can.obj", can_mat);
 	//BoundBox bb[10];
 	int count = 0;
 	for (auto it = modelMap.begin(); it != modelMap.end(); it++) {
@@ -302,6 +305,10 @@ int main()
 			(it->second).type = PERSON;
 			modelMap[it->first].linkedID = "id" + (it->first).substr(6);
 			modelMap[it->first].linkedTicket = "ticket" + (it->first).substr(6);
+		}
+		else if (typeStr == "can")
+		{
+			(it->second).type = CAN;
 		}
 		else { (it->second).type = NONE; }
 	}
@@ -345,13 +352,13 @@ int main()
 	int numFrames = 0;
 	glm::vec3 camSave;
 
-	GLfloat accel = -9.8;
-	GLfloat height = 100;
-	double velocity = 0.1;
+//	GLfloat accel = -9.8;
+//	GLfloat height = 100;
+//	double velocity = 0.1;
 
-	glm::vec3 position(0, height, -10.f);
-	glm::mat4 IDMat;
-	can_mat = glm::translate(IDMat, glm::vec3(0.0f, 100.0f, -10.0f));
+//	glm::vec3 position(0, height, -10.f);
+//	glm::mat4 IDMat;
+//	can_mat = glm::translate(IDMat, glm::vec3(0.0f, 100.0f, -10.0f));
 
 	// Text 2D
 	//Text2D textRenderer = Text2D("text2d-font.dds");
@@ -408,16 +415,16 @@ int main()
 
 		//GRAVITY TESTING CODE
 
-		if (position.y > -1)
-		{
-			position.y -= (velocity*deltaTime) + (0.5*1.6*deltaTime*deltaTime);
-			velocity += (1.6*deltaTime);
-		}
-		glm::mat4 can_mat;
-		can_mat = glm::translate(can_mat, glm::vec3(position.x, position.y, position.z));
-		ourShader.setMat4("model", can_mat);
-		can.t = can_mat;
-		can.Draw(ourShader);
+//		if (position.y > -1)
+//		{
+//			position.y -= (velocity*deltaTime) + (0.5*1.6*deltaTime*deltaTime);
+//			velocity += (1.6*deltaTime);
+//		}
+//		glm::mat4 can_mat;
+//		can_mat = glm::translate(can_mat, glm::vec3(position.x, position.y, position.z));
+//		ourShader.setMat4("model", can_mat);
+//		can.t = can_mat;
+//		can.Draw(ourShader);
 
 		//END TEST
 
@@ -560,21 +567,20 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 					break;
 				case CHAIR:
 					std::cout << modelMap[modelStr].code << ": I'll sit down." << std::endl;
-					if (modelMap[modelStr].code != 102)
-					{
-						camera.Position = glm::vec3((modelMap[modelStr].transform)[3]);
-						camera.Position[1] = -0.5;
-						camera.setSitting();
-					}
-					else
-					{
-						std::cout << "Made it" << std::endl;
-						moveFlag = true;
-						moveModel = modelSelect(modelMap[modelStr].code);
-						std::cout << moveModel << std::endl;
-						reposx = 0;
-						reposy = 0;
-					}
+
+					camera.Position = glm::vec3((modelMap[modelStr].transform)[3]);
+					camera.Position[1] = -0.5;
+					camera.setSitting();
+
+					break;
+
+				case CAN:
+					std::cout << modelMap[modelStr].code << ": Can." << std::endl;
+					moveFlag = true;
+					moveModel = modelStr;
+				//	std::cout << moveModel << std::endl;
+					reposx = 0;
+					reposy = 0;
 					break;
 				}
 			}
@@ -593,7 +599,6 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 		moveFlag = false;
 		moveModel = "";
 	}
-
 }
 
 void renderSelection(void)
@@ -635,11 +640,11 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	{
 		if (currX > lastX)
 		{
-			reposx = 0.005;
+			reposx = 0.05;
 		}
 		else if (currX < lastX)
 		{
-			reposx = -0.005;
+			reposx = -0.05;
 		}
 		else
 		{
@@ -648,11 +653,11 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 		if (currY > lastY)
 		{
-			reposy = -0.005;
+			reposy = -0.025;
 		}
 		else if (currY < lastY)
 		{
-			reposy = 0.005;
+			reposy = 0.025;
 		}
 		else
 		{
@@ -677,7 +682,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	if (moveFlag == true)
 	{
-		std::cout << "Made it" << std::endl;
 		glm::mat4 camMove = modelMap[moveModel].transform;
 		camMove = glm::translate(camMove, glm::vec3(reposx, reposy, 0));
 		modelMap[moveModel].transform = camMove;

@@ -21,7 +21,7 @@ using namespace std;
 
 unsigned int TextureFromFile(const char *path, const string &directory, bool gamma = false);
 
-enum InteractType { NONE, CHAIR, PERSON, POLE };
+enum InteractType { NONE, CHAIR, PERSON, POLE, CAN };
 
 class Model
 {
@@ -93,7 +93,6 @@ private:
 		{
 			processNode(node->mChildren[i], scene);
 		}
-
 	}
 
 	Mesh processMesh(aiMesh *mesh, const aiScene *scene)
