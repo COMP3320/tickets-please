@@ -112,6 +112,11 @@ public:
 	void disable() {
 		this->enabled = false;
 	}
+
+	void toggle() {
+		this->enabled = !this->enabled;
+	}
+
 private:
 	int width;
 	int height;

@@ -20,6 +20,7 @@
 #include "motionBlur.h"
 #include "grayscale.h"
 #include "inversion.h"
+#include "keys.h"
 
 #include <stdio.h>  
 #include <stdlib.h> 
@@ -31,7 +32,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLength);
+void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLength, Keys keys);
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
 void renderSelection(void);
 // settings
@@ -413,6 +414,22 @@ int main()
 	inversion = new Inversion(SCR_WIDTH, SCR_HEIGHT, false);
 	inversion->setup();
 	
+	std::vector<int> interestingKeys = std::vector<int>({
+		GLFW_KEY_ESCAPE,
+		GLFW_KEY_LEFT_CONTROL,
+		GLFW_KEY_LEFT_SHIFT,
+		GLFW_KEY_W,
+		GLFW_KEY_S,
+		GLFW_KEY_A,
+		GLFW_KEY_D,
+		GLFW_KEY_I,
+		GLFW_KEY_F,
+		GLFW_KEY_M,
+		GLFW_KEY_G,
+	});
+
+	Keys keys = Keys(window, interestingKeys);
+	
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -438,7 +455,7 @@ int main()
 
 		// input
 		// -----
-		processInput(window, areaMap, bb, sizeof(bb) / sizeof(bb[0]));
+		processInput(window, areaMap, bb, sizeof(bb) / sizeof(bb[0]), keys);
 
 		// render
 		// ------
@@ -518,6 +535,7 @@ int main()
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 
+		keys.update();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -533,9 +551,11 @@ int main()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLength)
+void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLength, Keys keys)
 {
-	int speed = 1;
+	if (keys.isPressed(GLFW_KEY_ESCAPE)) {
+		glfwSetWindowShouldClose(window, true);
+	}
 
 	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS && flag) {
 		std::string idStr = modelMap[modelMap[focusPerson].linkedID].idName;
@@ -556,6 +576,7 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 		modelMap[modelMap[focusPerson].linkedTicket].rendered = false;
 		flag = false;
 	}
+
 	if (glfwGetKey(window, GLFW_KEY_DELETE) == GLFW_PRESS && flag) {
 		std::string idStr = modelMap[modelMap[focusPerson].linkedID].idName;
 		std::string ticketStr = modelMap[modelMap[focusPerson].linkedTicket].ticketName;
@@ -577,44 +598,54 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 	}
 
 	// Effects
-	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
-		enableDepthOfField = true;
-	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_RELEASE)
-		enableDepthOfField = false;
 
-	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-		motionBlur->enable();
-	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE)
-		motionBlur->disable();
+	if (keys.isJustPressed(GLFW_KEY_F)) {
+		enableDepthOfField = enableDepthOfField;
+	}
 
-	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-		grayscale->enable();
-	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE)
-		grayscale->disable();
+	if (keys.isJustPressed(GLFW_KEY_M)) {
+		motionBlur->toggle();
+	}
 
-	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
-		inversion->enable();
-	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_RELEASE)
-		inversion->disable();
+	if (keys.isJustPressed(GLFW_KEY_G)) {
+		grayscale->toggle();
+	}
 
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+	if (keys.isJustPressed(GLFW_KEY_I)) {
+		inversion->toggle();
+	}
 
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+	// Movement
+
+	int speed = 1;
+
+	if (keys.isPressed(GLFW_KEY_LEFT_SHIFT)) {
 		speed = 2;
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-		camera.setCrouch(true);
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
-		camera.setCrouch(false);
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime * speed, areaMap, bb, arrLength, flag);
+	}
 
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	if (keys.isPressed(GLFW_KEY_LEFT_CONTROL)) {
+		camera.setCrouch(true);
+	}
+
+	if (keys.isReleased(GLFW_KEY_LEFT_CONTROL)) {
+		camera.setCrouch(false);
+	}
+
+	if (keys.isPressed(GLFW_KEY_W)) {
+		camera.ProcessKeyboard(FORWARD, deltaTime * speed, areaMap, bb, arrLength, flag);
+	}
+
+	if (keys.isPressed(GLFW_KEY_S)) {
 		camera.ProcessKeyboard(BACKWARD, deltaTime * speed, areaMap, bb, arrLength, flag);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	}
+	
+	if (keys.isPressed(GLFW_KEY_A)) {
 		camera.ProcessKeyboard(LEFT, deltaTime * speed, areaMap, bb, arrLength, flag);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	}
+
+	if (keys.isPressed(GLFW_KEY_D)) {
 		camera.ProcessKeyboard(RIGHT, deltaTime * speed, areaMap, bb, arrLength, flag);
+	}
 }
 
 void mouse_button_callback(GLFWwindow * window, int button, int action, int mods)
