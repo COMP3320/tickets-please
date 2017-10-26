@@ -136,6 +136,10 @@ void constructScene(Shader s) {
 	}
 }
 
+void generateTickets() {
+
+}
+
 int main()
 {
 	srand(time(0));
@@ -284,6 +288,7 @@ int main()
 	modelMap["person1"].model = Model("../objects/person/person.obj", person1_mat);
 	modelMap["person2"].model = Model("../objects/person/person.obj", person2_mat);
 
+	// Generate ticket and ids
 	std::string docNames[] = {
 		"junior_invalid",
 		"junior_valid",
@@ -298,15 +303,12 @@ int main()
 
 	int reroll = rand();
 
-	std::cout << ticketNum << ", " << idNum << std::endl;
 	modelMap["ticket1"].model = Model(std::string("../objects/ticket/" + docNames[ticketNum] + ".obj"), ticket1_mat);
 	modelMap["ticket1"].ticketName = docNames[ticketNum];
 	if (reroll < 0.4) { idNum = int(rand() % 7); }
 	else { idNum = ticketNum; }
 	modelMap["id1"].model = Model(std::string("../objects/id/" + docNames[idNum] + ".obj"), id1_mat);
 	modelMap["id1"].idName = docNames[idNum];
-
-	std::cout << docNames[ticketNum] << ", " << docNames[idNum] << std::endl;
 
 	ticketNum = rand() % 6;
 	reroll = rand();
@@ -316,8 +318,6 @@ int main()
 	else { idNum = ticketNum; }
 	modelMap["id2"].model = Model("../objects/id/" + docNames[idNum] + ".obj", id2_mat);
 	modelMap["id2"].idName = docNames[idNum];
-
-	std::cout << docNames[ticketNum] << ", " << docNames[idNum] << std::endl;
 
 	modelMap["can"].model = Model("../objects/can.obj", can_mat);
 	
@@ -781,16 +781,15 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	currX = xpos;
 	currY = ypos;
-	int xRepos = 0.1, yRepos = 0.5;
 	if (moveFlag == true)
 	{
 		if (currX > lastX)
 		{
-			reposx = xRepos;
+			reposx = 0.05;
 		}
 		else if (currX < lastX)
 		{
-			reposx = -xRepos;
+			reposx = -0.05;
 		}
 		else
 		{
@@ -799,11 +798,11 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 		if (currY > lastY)
 		{
-			reposy = -yRepos;
+			reposy = -0.025;
 		}
 		else if (currY < lastY)
 		{
-			reposy = yRepos;
+			reposy = 0.025;
 		}
 		else
 		{
