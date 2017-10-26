@@ -362,6 +362,74 @@ int main()
 
 	// Text 2D
 	//Text2D textRenderer = Text2D("text2d-font.dds");
+
+	// Motion blur
+
+	Shader motionBlurShader("motion-blur.vert", "motion-blur.frag");
+
+	// Process quad VAO/VBO
+	unsigned int quadVAO, quadVBO;
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+	// Configure frame buffer
+	unsigned int fbo;
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	// Multisampling!
+	// 1. Configure multisample framebuffer
+	unsigned int framebuffer;
+	glGenTextures(1, &framebuffer);
+	glBindTexture(GL_FRAMEBUFFER, framebuffer);
+
+	// 2. Create multisampled colour attachment tex
+	int MS_SIZE = 8;
+	unsigned int texColBuffMS;
+	glGenTextures(1, &texColBuffMS);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, texColBuffMS);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, MS_SIZE, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, texColBuffMS, 0);
+
+	// 3. Create render buffer for depth & stencil
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, MS_SIZE, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "ERROR: Framebuffer is not complete!" << std::endl;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// 4. Create intermediate framebuffer
+	unsigned int intermediateFBO;
+	glGenFramebuffers(1, &intermediateFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, intermediateFBO);
+
+	// Current frame buffer
+	unsigned int texColorBuffer;
+	glGenTextures(1, &texColorBuffer);
+	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
+	glm::mat4 prevView;
+
+	if (enableMotionBlur == false) {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 	
 	// render loop
 	// -----------
@@ -453,25 +521,34 @@ int main()
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
 		glDepthFunc(GL_LESS); // set depth function back to default
+		
+		if (enableMotionBlur) {
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFBO);
+			glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
-		// Draw text on the screen
-		//char text[256];
-		//sprintf(text, "%.2f sec", glfwGetTime());
-		//textRenderer.print(text, SCR_WIDTH / 2, SCR_HEIGHT / 2, 60);
+			// Now back to default framebuffer and draw our quad
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glDisable(GL_DEPTH_TEST);
+
+			motionBlurShader.use();
+			motionBlurShader.setMat4("view", view);
+			motionBlurShader.setMat4("proj", projection);
+
+			glBindVertexArray(quadVAO);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texColorBuffer);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			glEnable(GL_DEPTH_TEST);
+		}
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 
-		if (enableMotionBlur) {
-			glfwSwapBuffers(window);
-		}
-
-		else
-		{
-			glfwSwapBuffers(window);
-		}
-
-
+		prevView = view;
+		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
@@ -508,9 +585,9 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_RELEASE)
 		enableDepthOfField = false;
 
-	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
 		enableMotionBlur = true;
-	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_RELEASE)
+	if (glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE)
 		enableMotionBlur = false;
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
