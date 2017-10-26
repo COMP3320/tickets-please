@@ -72,6 +72,9 @@ struct Light {
 Shader selection;
 
 bool enableDepthOfField = false;
+bool enableMotionBlur = false;
+
+int maximumMotionBlurFrames = 100;
 
 /*
  *	TEST GLOBALS FOR PERSON INTERACTION
@@ -87,9 +90,9 @@ std::string modelSelect(int pickCode)
 {
 	switch (pickCode)
 	{
-		case 102:
-			return "chairs3";
-			break;
+	case 102:
+		return "chairs3";
+		break;
 	}
 }
 
@@ -128,6 +131,23 @@ void constructScene(Shader s) {
 			(it->second).model.Draw(s);
 		}
 	}
+}
+
+void frustum_depthoffield(GLdouble left, GLdouble right,
+	GLdouble bottom, GLdouble top,
+	GLdouble near, GLdouble far,
+	GLdouble xoff, GLdouble yoff,
+	GLdouble focus)
+{
+	glFrustum(left - xoff * near / focus,
+		right - xoff * near / focus,
+		top - yoff * near / focus,
+		bottom - yoff * near / focus,
+		near, far);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(-xoff, -yoff, 0);
 }
 
 int main()
@@ -193,7 +213,7 @@ int main()
 
 	// build and compile shaders
 	// -------------------------
-	
+
 	Shader ourShader("shader.vert", "shader.frag");
 	Shader skyboxShader("cubemap.vert", "cubemap.frag");
 	selection.init("selection.vert", "selection.frag");
@@ -269,12 +289,12 @@ int main()
 //	modelMap["chairs1"].model = Model("../objects/chairTest.obj", chairs1_mat);
 //	modelMap["chairs2"].model = Model("../objects/chairTest.obj", chairs2_mat);
 	modelMap["chairs3"].model = Model("../objects/chairTest.obj", chairs3_mat);
-//	modelMap["chairs4"].model = Model("../objects/chairTest.obj", chairs4_mat);
-	modelMap["person1"].model = Model("../objects/person/person.obj",    person1_mat);
-	modelMap["person2"].model = Model("../objects/person/person.obj",    person2_mat);
-	modelMap["ticket1"].model = Model("../objects/ticket/Ticket.obj",    ticket1_mat);
+	//	modelMap["chairs4"].model = Model("../objects/chairTest.obj", chairs4_mat);
+	modelMap["person1"].model = Model("../objects/person/person.obj", person1_mat);
+	modelMap["person2"].model = Model("../objects/person/person.obj", person2_mat);
+	modelMap["ticket1"].model = Model("../objects/ticket/Ticket.obj", ticket1_mat);
 	modelMap["ticket2"].model = Model("../objects/ticket/Ticket.obj", ticket2_mat);
-	modelMap["id1"].model	  = Model("../objects/id/ID.obj",			 id1_mat);
+	modelMap["id1"].model = Model("../objects/id/ID.obj", id1_mat);
 	modelMap["id2"].model = Model("../objects/id/ID.obj", id2_mat);
 
 	glm::mat4 can_mat;
@@ -295,45 +315,45 @@ int main()
 		(it->second).code = i;
 		std::string typeStr = (it->first).substr(0, 6);
 		if (typeStr == "chairs") { (it->second).type = CHAIR; }
-		else if (typeStr == "person") { 
-			(it->second).type = PERSON; 
+		else if (typeStr == "person") {
+			(it->second).type = PERSON;
 			modelMap[it->first].linkedID = "id" + (it->first).substr(6);
 			modelMap[it->first].linkedTicket = "ticket" + (it->first).substr(6);
 		}
 		else { (it->second).type = NONE; }
 	}
-	
+
 	// load bounding boxes
-	BoundBox bb[10] = { 
-//		BoundBox(modelMap["chairs1"].model.getMaxCords(), modelMap["chairs1"].model.getMinCords()),
-//		BoundBox(modelMap["chairs2"].model.getMaxCords(), modelMap["chairs2"].model.getMinCords()),
-		BoundBox(modelMap["chairs3"].model.getMaxCords(), modelMap["chairs3"].model.getMinCords()),
-//		BoundBox(modelMap["chairs4"].model.getMaxCords(), modelMap["chairs4"].model.getMinCords()),
-		BoundBox(modelMap["person1"].model.getMaxCords(), modelMap["person1"].model.getMinCords()),
-		BoundBox(modelMap["person2"].model.getMaxCords(), modelMap["person2"].model.getMinCords()),
-		BoundBox(modelMap["ticket1"].model.getMaxCords(), modelMap["ticket1"].model.getMinCords()),
-		BoundBox(modelMap["ticket2"].model.getMaxCords(), modelMap["ticket2"].model.getMinCords()),
-		BoundBox(modelMap["id1"].model.getMaxCords(), modelMap["id1"].model.getMinCords()),
-		BoundBox(modelMap["id2"].model.getMaxCords(), modelMap["id2"].model.getMinCords())
+	BoundBox bb[10] = {
+		//		BoundBox(modelMap["chairs1"].model.getMaxCords(), modelMap["chairs1"].model.getMinCords()),
+		//		BoundBox(modelMap["chairs2"].model.getMaxCords(), modelMap["chairs2"].model.getMinCords()),
+				BoundBox(modelMap["chairs3"].model.getMaxCords(), modelMap["chairs3"].model.getMinCords()),
+				//		BoundBox(modelMap["chairs4"].model.getMaxCords(), modelMap["chairs4"].model.getMinCords()),
+						BoundBox(modelMap["person1"].model.getMaxCords(), modelMap["person1"].model.getMinCords()),
+						BoundBox(modelMap["person2"].model.getMaxCords(), modelMap["person2"].model.getMinCords()),
+						BoundBox(modelMap["ticket1"].model.getMaxCords(), modelMap["ticket1"].model.getMinCords()),
+						BoundBox(modelMap["ticket2"].model.getMaxCords(), modelMap["ticket2"].model.getMinCords()),
+						BoundBox(modelMap["id1"].model.getMaxCords(), modelMap["id1"].model.getMinCords()),
+						BoundBox(modelMap["id2"].model.getMaxCords(), modelMap["id2"].model.getMinCords())
 	};
 
 	BoundBox areaMap(glm::vec3(7.75f, 2.0f, -1.2f), glm::vec3(-7.75f, -2.0f, -7.8f));
-//	BoundBox areaMap(glm::vec3(20.75f, 2.0f, 20.2f), glm::vec3(-20.75f, -2.0f, -20.8f));
-//	BoundBox bb(ourModel.getMaxCords(), ourModel.getMinCords());
-	// don't forget to enable shader before setting uniforms
+	//	BoundBox areaMap(glm::vec3(20.75f, 2.0f, 20.2f), glm::vec3(-20.75f, -2.0f, -20.8f));
+	//	BoundBox bb(ourModel.getMaxCords(), ourModel.getMinCords());
+		// don't forget to enable shader before setting uniforms
 	ourShader.use();
 	skyboxShader.use();
 	ourShader.setInt("texture1", 0);
 	skyboxShader.setInt("skybox", 0);
 
-	unsigned char res[4] = {0,0,0,0};
+	unsigned char res[4] = { 0,0,0,0 };
 	GLint viewport[4];
-	
+
 	glm::vec4 origColour = glm::vec4(0.9f, 0.95f, 1.0f, 0.95f);
 	Light lights[4];
 	int RANGE = 15;
 	for (int i = 0; i < 2; ++i) {
-		lights[i].colour   = origColour;
+		lights[i].colour = origColour;
 	}
 	lights[0].position = glm::vec4(rand() * -RANGE, 0.0f, 3.0f, 1.0f);
 	lights[1].position = glm::vec4(rand() * -RANGE, 0.0f, 3.0f, 1.0f);
@@ -353,6 +373,8 @@ int main()
 	// Text 2D
 	//Text2D textRenderer = Text2D("text2d-font.dds");
 
+	glEnable(GL_ACCUM);
+
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
@@ -364,15 +386,15 @@ int main()
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		//if (numFrames % 20 == 0) {
-			for (int i = 0; i < 2; ++i) {
-				if (lights[i].position.x >= -RANGE) {
-					lights[i].position.x -= 0.09f;
-				}
-				else {
-					lights[i].position.x = RANGE;
-				}
-				lights[i].colour = origColour;
+		for (int i = 0; i < 2; ++i) {
+			if (lights[i].position.x >= -RANGE) {
+				lights[i].position.x -= 0.09f;
 			}
+			else {
+				lights[i].position.x = RANGE;
+			}
+			lights[i].colour = origColour;
+		}
 		//}
 		lastFrame = currentFrame;
 
@@ -383,15 +405,7 @@ int main()
 		// render
 		// ------
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		if (enableDepthOfField) {
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ACCUM_BUFFER_BIT);
-		}
 
-		else
-		{
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		}
-		ourShader.use();
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 view = camera.GetViewMatrix();
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_position[0]"), 1, glm::value_ptr(lights[0].position));
@@ -404,6 +418,9 @@ int main()
 		glUniform4fv(glGetUniformLocation(ourShader.ID, "light_colour[3]"), 1, glm::value_ptr(lights[3].colour));
 
 		if (enableDepthOfField) {
+			glClear(GL_ACCUM_BUFFER_BIT);
+
+			ourShader.use();
 			GLint uniform_mvp = glGetUniformLocation(ourShader.ID, "MVP");
 
 			vec3 object = camera.Position + camera.Front;
@@ -417,20 +434,22 @@ int main()
 			glm::vec3 p_up = glm::normalize(glm::cross(object - eye, right));
 
 			for (int i = 0; i < n; i++) {
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				glm::vec3 bokeh = right * cosf(i * 2 * 3.14f / n) + p_up * sinf(i * 2 * 3.14f / n);
-				std::cout << i << " " << bokeh.x << "," << bokeh.y << "," << bokeh.z << "" << std::endl;
+				//std::cout << i << " " << bokeh.x << "," << bokeh.y << "," << bokeh.z << "" << std::endl;
 
 				glm::mat4 modelview = glm::lookAt(eye + aperture * bokeh, object, p_up);
 				glm::mat4 mvp = projection * modelview;
 
-				glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
+				//glUniformMatrix4fv(uniform_mvp, 1, GL_FALSE, glm::value_ptr(mvp));
 
+				ourShader.use();
 				ourShader.setMat4("projection", projection);
-				ourShader.setMat4("view", view);
+				ourShader.setMat4("view", mvp);
 
 				constructScene(ourShader);
 
-				glAccum(i ? GL_ACCUM : GL_LOAD, 1.0 / n);
+				glAccum(i ? GL_ACCUM : GL_LOAD, 1.0f / n);
 			}
 
 			glAccum(GL_RETURN, 1);
@@ -438,12 +457,15 @@ int main()
 
 		else
 		{
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			ourShader.use();
 			ourShader.setMat4("projection", projection);
 			ourShader.setMat4("view", view);
 
 			constructScene(ourShader);
 		}
-		
+
 		//GRAVITY TESTING CODE
 
 		if (position.y > -1)
@@ -472,7 +494,7 @@ int main()
 		}
 
 		// draw skybox as last
-		glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+		/*glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
 		skyboxShader.use();
 		view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
 		skyboxShader.setMat4("view", view);
@@ -483,7 +505,7 @@ int main()
 		glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 		glBindVertexArray(0);
-		glDepthFunc(GL_LESS); // set depth function back to default
+		glDepthFunc(GL_LESS); // set depth function back to default*/
 
 		// Draw text on the screen
 		//char text[256];
@@ -492,8 +514,25 @@ int main()
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
-		
-		glfwSwapBuffers(window);
+
+		if (enableMotionBlur) {
+			if ((numFrames % maximumMotionBlurFrames) == 0)
+				glAccum(GL_LOAD, 1.0 / maximumMotionBlurFrames);
+			else
+				glAccum(GL_ACCUM, 1.0 / maximumMotionBlurFrames);
+
+			if ((numFrames % maximumMotionBlurFrames) == (maximumMotionBlurFrames - 1)) {
+				glAccum(GL_RETURN, 1.0f);
+				glfwSwapBuffers(window);
+			}
+		}
+
+		else
+		{
+			glfwSwapBuffers(window);
+		}
+
+
 		glfwPollEvents();
 	}
 
@@ -529,7 +568,12 @@ void processInput(GLFWwindow *window, BoundBox areaMap, BoundBox bb[], int arrLe
 		enableDepthOfField = true;
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_RELEASE)
 		enableDepthOfField = false;
-	
+
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+		enableMotionBlur = true;
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_RELEASE)
+		enableMotionBlur = false;
+
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
@@ -578,8 +622,8 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 					std::cout << modelMap[modelStr].code << ": How's it going?" << std::endl;
 					focusPerson = modelStr;
 					flag = true;
-					modelMap[modelMap[focusPerson].linkedID].rendered		= true;
-					modelMap[modelMap[focusPerson].linkedTicket].rendered	= true;
+					modelMap[modelMap[focusPerson].linkedID].rendered = true;
+					modelMap[modelMap[focusPerson].linkedTicket].rendered = true;
 					code = modelMap[modelStr].code;
 					break;
 				case CHAIR:
@@ -606,18 +650,18 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, int mods
 		else
 		{
 			flag = false;
-			modelMap[modelMap[focusPerson].linkedID].rendered		= false;
-			modelMap[modelMap[focusPerson].linkedTicket].rendered	= false;
+			modelMap[modelMap[focusPerson].linkedID].rendered = false;
+			modelMap[modelMap[focusPerson].linkedTicket].rendered = false;
 			focusPerson = "";
 		}
-		
+
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 	{
 		moveFlag = false;
 		moveModel = "";
 	}
-		
+
 }
 
 void renderSelection(void)
@@ -626,14 +670,14 @@ void renderSelection(void)
 	GLint viewport[4];
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	selection.use();
 
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 	selection.setMat4("projection", projection);
 	selection.setMat4("view", view);
-	
+
 	constructScene(selection);
 
 	glClearColor(0.00f, 0.00f, 1.0f, 0.0f);
@@ -674,7 +718,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		{
 			reposy = -0.005;
 		}
-		else if(currY < lastY)
+		else if (currY < lastY)
 		{
 			reposy = 0.005;
 		}
@@ -698,7 +742,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastY = ypos;
 
 	camera.ProcessMouseMovement(xoffset, yoffset, flag);
-	
+
 	if (moveFlag == true)
 	{
 		std::cout << "Made it" << std::endl;
