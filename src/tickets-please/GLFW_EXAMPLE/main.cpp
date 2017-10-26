@@ -301,12 +301,24 @@ int main()
 	person3_mat = glm::translate(person3_mat, glm::vec3(4.5f, -6.0f, -5.0f));
 	modelMap["person3"].transform = person3_mat;
 
+	glm::mat4 ticket3_mat;
+	ticket3_mat = glm::scale(ticket3_mat, glm::vec3(0.1f, 0.1f, 0.1f));
+	ticket3_mat = glm::rotate(ticket3_mat, -1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
+	ticket3_mat = glm::translate(ticket3_mat, glm::vec3(-30.0f, -7.0f, -20.0f));
+	modelMap["ticket3"].transform = ticket3_mat;
+
+	glm::mat4 id3_mat;
+	id3_mat = glm::scale(id3_mat, glm::vec3(0.1f, 0.1f, 0.1f));
+	id3_mat = glm::rotate(id3_mat, -1.55f, glm::vec3(0.0f, 1.0f, 0.0f));
+	id3_mat = glm::translate(id3_mat, glm::vec3(-30.0f, -7.0f, -27.5f));
+	modelMap["id3"].transform = id3_mat;
+
 	// load models
 	// -----------
 	modelMap["chairs1"].model = Model("../objects/chairTest.obj", chairs1_mat);
-		modelMap["chairs2"].model = Model("../objects/chairTest.obj", chairs2_mat);
+	modelMap["chairs2"].model = Model("../objects/chairTest.obj", chairs2_mat);
 	modelMap["chairs3"].model = Model("../objects/chairTest.obj", chairs3_mat);
-		modelMap["chairs4"].model = Model("../objects/chairTest.obj", chairs4_mat);
+	modelMap["chairs4"].model = Model("../objects/chairTest.obj", chairs4_mat);
 	modelMap["person1"].model = Model("../objects/person/person.obj", person1_mat);
 	modelMap["person2"].model = Model("../objects/person/person.obj", person2_mat);
 	modelMap["person3"].model = Model("../objects/person/personsitting.obj", person3_mat);
@@ -327,7 +339,7 @@ int main()
 
 	modelMap["ticket1"].model = Model(std::string("../objects/ticket/" + docNames[ticketNum] + ".obj"), ticket1_mat);
 	modelMap["ticket1"].ticketName = docNames[ticketNum];
-	if (reroll < 0.4) { idNum = int(rand() % 7); }
+	if (reroll < 0.6) { idNum = int(rand() % 7); }
 	else { idNum = ticketNum; }
 	modelMap["id1"].model = Model(std::string("../objects/id/" + docNames[idNum] + ".obj"), id1_mat);
 	modelMap["id1"].idName = docNames[idNum];
@@ -336,10 +348,19 @@ int main()
 	reroll = rand();
 	modelMap["ticket2"].model = Model(std::string("../objects/ticket/" + docNames[ticketNum] + ".obj"), ticket2_mat);
 	modelMap["ticket2"].ticketName = docNames[ticketNum];
-	if (reroll < 0.4) { idNum = int(rand() % 7); }
+	if (reroll < 0.6) { idNum = int(rand() % 7); }
 	else { idNum = ticketNum; }
 	modelMap["id2"].model = Model("../objects/id/" + docNames[idNum] + ".obj", id2_mat);
 	modelMap["id2"].idName = docNames[idNum];
+
+	ticketNum = rand() % 6;
+	reroll = rand();
+	modelMap["ticket3"].model = Model(std::string("../objects/ticket/" + docNames[ticketNum] + ".obj"), ticket3_mat);
+	modelMap["ticket3"].ticketName = docNames[ticketNum];
+	if (reroll < 0.6) { idNum = int(rand() % 7); }
+	else { idNum = ticketNum; }
+	modelMap["id3"].model = Model("../objects/id/" + docNames[idNum] + ".obj", id3_mat);
+	modelMap["id3"].idName = docNames[idNum];
 
 	modelMap["can"].model = Model("../objects/can.obj", can_mat);
 
@@ -373,17 +394,19 @@ int main()
 	}
 
 	// load bounding boxes
-	BoundBox bb[10] = {
+	BoundBox bb[12] = {
 				BoundBox(modelMap["chairs1"].model.getMaxCords(), modelMap["chairs1"].model.getMinCords()),
 				BoundBox(modelMap["chairs2"].model.getMaxCords(), modelMap["chairs2"].model.getMinCords()),
 				BoundBox(modelMap["chairs3"].model.getMaxCords(), modelMap["chairs3"].model.getMinCords()),
-						BoundBox(modelMap["chairs4"].model.getMaxCords(), modelMap["chairs4"].model.getMinCords()),
-						BoundBox(modelMap["person1"].model.getMaxCords(), modelMap["person1"].model.getMinCords()),
-						BoundBox(modelMap["person2"].model.getMaxCords(), modelMap["person2"].model.getMinCords()),
-						BoundBox(modelMap["ticket1"].model.getMaxCords(), modelMap["ticket1"].model.getMinCords()),
-						BoundBox(modelMap["ticket2"].model.getMaxCords(), modelMap["ticket2"].model.getMinCords()),
-						BoundBox(modelMap["id1"].model.getMaxCords(), modelMap["id1"].model.getMinCords()),
-						BoundBox(modelMap["id2"].model.getMaxCords(), modelMap["id2"].model.getMinCords())
+				BoundBox(modelMap["chairs4"].model.getMaxCords(), modelMap["chairs4"].model.getMinCords()),
+				BoundBox(modelMap["person1"].model.getMaxCords(), modelMap["person1"].model.getMinCords()),
+				BoundBox(modelMap["person2"].model.getMaxCords(), modelMap["person2"].model.getMinCords()),
+				BoundBox(modelMap["ticket1"].model.getMaxCords(), modelMap["ticket1"].model.getMinCords()),
+				BoundBox(modelMap["ticket2"].model.getMaxCords(), modelMap["ticket2"].model.getMinCords()),
+				BoundBox(modelMap["ticket3"].model.getMaxCords(), modelMap["ticket3"].model.getMinCords()),
+				BoundBox(modelMap["id1"].model.getMaxCords(), modelMap["id1"].model.getMinCords()),
+				BoundBox(modelMap["id2"].model.getMaxCords(), modelMap["id2"].model.getMinCords()),
+				BoundBox(modelMap["id3"].model.getMaxCords(), modelMap["id3"].model.getMinCords())
 	};
 
 	BoundBox areaMap(glm::vec3(7.75f, 2.0f, -1.2f), glm::vec3(-7.75f, -2.0f, -7.8f));

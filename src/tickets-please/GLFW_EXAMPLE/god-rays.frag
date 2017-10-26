@@ -40,7 +40,7 @@ void main(){
 
     result /= float(nSamples);
 
-    FragColour = 0.9 * texture(screenTexture0, TexCoords) + 0.35 * result;
+    FragColour = 0.9 * texture(screenTexture0, TexCoords) + 0.3 * vec4((1 - vec3(result)), 1.0);
     /*
         0.1 * vec4(vec3(texture(screenTexture0, TexCoords)), 0.01) +
         0.1 * vec4(vec3(texture(screenTexture1, TexCoords)), 0.01) +
