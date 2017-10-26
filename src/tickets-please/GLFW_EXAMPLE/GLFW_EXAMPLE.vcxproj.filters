@@ -187,6 +187,12 @@
     <None Include="text2d.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="depth-of-field.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="depth-of-field.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">

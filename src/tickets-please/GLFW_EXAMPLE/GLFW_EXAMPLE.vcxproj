@@ -134,6 +134,8 @@
     <None Include="..\objects\person.mtl" />
     <None Include="..\objects\Ticket.mtl" />
     <None Include="..\objects\Train.mtl" />
+    <None Include="depth-of-field.frag" />
+    <None Include="depth-of-field.vert" />
     <None Include="nanosuit.blend" />
     <None Include="nanosuit.mtl" />
     <None Include="selection.frag" />
