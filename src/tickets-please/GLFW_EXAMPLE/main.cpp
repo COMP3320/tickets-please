@@ -47,7 +47,7 @@ bool firstMouse = true;
 float currX, currY;
 
 float reposx, reposy, yupdate = 0;
-
+float canx, cany, canz;
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -284,6 +284,9 @@ int main()
 	can_mat = glm::translate(can_mat, glm::vec3(0.0f, -2.0f, -7.0f));
 	can_mat = glm::scale(can_mat, glm::vec3(0.1f, 0.1f, 0.1f));
 	modelMap["can"].transform = can_mat;
+	canx = 0.0f;
+	cany = -2.0f;
+	canz = -7.0f;
 	// load models
 	// -----------
 //	modelMap["chairs1"].model = Model("../objects/chairTest.obj", chairs1_mat);
@@ -481,18 +484,23 @@ int main()
 		yupdate = 0;
 //GRAVITY TESTING CODE
 
-		if (moveFlag == false && position.y>floor)
+		if (moveFlag == false && cany>-2)
 		{
 		//	std::cout << position.y << std::endl;
 
-			position.y -= (velocity*deltaTime) + (0.5*1.6*deltaTime*deltaTime);
-			velocity += (1.6*deltaTime);
+			cany -= (velocity*deltaTime) + (0.5*1.8*deltaTime*deltaTime);
+			velocity += (1.8*deltaTime);
 
-			glm::mat4 camMove = modelMap[moveModel].transform;
-			camMove = glm::translate(camMove, glm::vec3(0, position.y, 0));
+			glm::mat4 camMove;// = modelMap[moveModel].transform;
 
+			camMove = glm::translate(camMove, glm::vec3(canx, cany, canz));
+			camMove = glm::scale(camMove, glm::vec3(0.1f, 0.1f, 0.1f));
 			modelMap["can"].model.t = camMove;
 			modelMap["can"].transform = camMove;
+		}
+		else if (moveFlag == true)
+		{
+			velocity = 0.1;
 		}
 		
 
@@ -500,7 +508,7 @@ int main()
 
 		constructScene(ourShader);
 
-		std::cout << position.y << std::endl;
+	//	std::cout << position.y << std::endl;
 
 		if (flag == true)
 		{
@@ -799,6 +807,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 		yupdate = reposy;
 		glm::mat4 camMove = modelMap[moveModel].transform;
 		camMove = glm::translate(camMove, glm::vec3(reposx, reposy, 0));
+		canx = reposx;
+		cany = reposy;
 		modelMap[moveModel].transform = camMove;
 		modelMap[moveModel].model.t = camMove;	//not sure what t is
 		reposx = 0;
