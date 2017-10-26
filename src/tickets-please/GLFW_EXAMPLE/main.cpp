@@ -42,7 +42,7 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 float currX, currY;
 
-float reposx, reposy;
+float reposx, reposy, yupdate = 0;
 
 // timing
 float deltaTime = 0.0f;
@@ -352,11 +352,10 @@ int main()
 	int numFrames = 0;
 	glm::vec3 camSave;
 
-//	GLfloat accel = -9.8;
-//	GLfloat height = 100;
-//	double velocity = 0.1;
+	double velocity = 0.1;
 
-//	glm::vec3 position(0, height, -10.f);
+	glm::vec3 position(0, modelMap["can"].model.getMinCords().y, 0);
+	float floor = modelMap["can"].model.getMinCords().y;
 //	glm::mat4 IDMat;
 //	can_mat = glm::translate(IDMat, glm::vec3(0.0f, 100.0f, -10.0f));
 
@@ -410,23 +409,30 @@ int main()
 		ourShader.use();
 		ourShader.setMat4("projection", projection);
 		ourShader.setMat4("view", view);
+		position.y += yupdate;
+		yupdate = 0;
+//GRAVITY TESTING CODE
+
+		if (moveFlag == false && position.y>floor)
+		{
+		//	std::cout << position.y << std::endl;
+
+			position.y -= (velocity*deltaTime) + (0.5*1.6*deltaTime*deltaTime);
+			velocity += (1.6*deltaTime);
+
+			glm::mat4 camMove = modelMap[moveModel].transform;
+			camMove = glm::translate(camMove, glm::vec3(0, position.y, 0));
+
+			modelMap["can"].model.t = camMove;
+			modelMap["can"].transform = camMove;
+		}
+		
+
+//END TEST
 
 		constructScene(ourShader);
 
-		//GRAVITY TESTING CODE
-
-//		if (position.y > -1)
-//		{
-//			position.y -= (velocity*deltaTime) + (0.5*1.6*deltaTime*deltaTime);
-//			velocity += (1.6*deltaTime);
-//		}
-//		glm::mat4 can_mat;
-//		can_mat = glm::translate(can_mat, glm::vec3(position.x, position.y, position.z));
-//		ourShader.setMat4("model", can_mat);
-//		can.t = can_mat;
-//		can.Draw(ourShader);
-
-		//END TEST
+		std::cout << position.y << std::endl;
 
 		if (flag == true)
 		{
@@ -682,6 +688,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 	if (moveFlag == true)
 	{
+		yupdate = reposy;
 		glm::mat4 camMove = modelMap[moveModel].transform;
 		camMove = glm::translate(camMove, glm::vec3(reposx, reposy, 0));
 		modelMap[moveModel].transform = camMove;
